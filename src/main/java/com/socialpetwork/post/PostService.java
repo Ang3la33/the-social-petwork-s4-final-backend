@@ -20,6 +20,10 @@ public class PostService {
         return optionalPost.orElse(null);
     }
 
+    public List<Post> findPostsByUserId(long userId) {
+        return (List<Post>) postRepository.findByUserId(userId);
+    }
+
     public Post createPost(Post newPost) {
         return postRepository.save(newPost);
     }
