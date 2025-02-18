@@ -56,10 +56,11 @@ public class PostServiceTest {
 
     @Test
     void testDeletePost() {
-        when(postRepository.existsById(1L)).thenReturn(true);
-        boolean isDeleted = postService.deletePost(1L);
+        Long postId = 1L;
+        when(postRepository.existsById(postId)).thenReturn(true);
+        boolean isDeleted = postService.deletePost(postId);
         assertTrue(isDeleted);
-        verify(postRepository, times(1)).deleteById(1L);
+        verify(postRepository, times(1)).deleteById(postId);
     }
 
 }
