@@ -1,4 +1,4 @@
-package com.socialpetwork.User;
+package com.socialpetwork.user;
 
 public class UserController {
 }
