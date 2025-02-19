@@ -3,6 +3,8 @@ package com.socialpetwork.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 // User can be found by email and username
 // each should be assiged a ID
 // User need to change name, birthday, email
@@ -57,14 +59,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-
-
-
-
-
-
-
-
-
+    // Added
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 }
 
