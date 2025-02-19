@@ -1,4 +1,5 @@
 package com.socialpetwork.followertest;
 
-public class FollowerControllerTest {
+class FollowerControllerTest {
+
 }
