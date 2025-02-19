@@ -3,6 +3,7 @@ package com.socialpetwork.follower;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FollowerRepository extends JpaRepository<Follower, Long> {
@@ -13,7 +14,9 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
     // Get all users a specific user is following
     List<Follower> findByFollowerId(Long followerId);
 
-    // Check if a follower relationship exists
+    // Check if a follow relationship exists
     boolean existsByFollowedUserIdAndFollowerId(Long followedUserId, Long followerId);
+
+    Optional<Follower> findByFollowedUserIdAndFollowerId(Long followedUserId, Long followerId);
 }
 

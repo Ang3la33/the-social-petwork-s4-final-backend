@@ -1,12 +1,8 @@
-// Can change the naming later. I just do not want to confuse between the actual users that are in the User class
-// And the followers, followed users in the Follower class.
-// The file might change and more entities added looking at the database later or in process of the finishing project.
-// For now, it just a skeleton on which we can build or change more.
-
 package com.socialpetwork.follower;
 
 import com.socialpetwork.user.User;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "followers")
@@ -24,6 +20,10 @@ public class Follower {
     @JoinColumn(name = "follower_id", nullable = false)
     private User follower; // The user who follows
 
+    @Column(nullable = false)
+    private LocalDateTime followedAt;
+
+
     // Default constructor
     public Follower() {
     }
@@ -32,6 +32,7 @@ public class Follower {
     public Follower(User followedUser, User follower) {
         this.followedUser = followedUser;
         this.follower = follower;
+        this.followedAt = LocalDateTime.now(); // Automatically sets timestamp
     }
 
     // Getters and Setters
@@ -46,4 +47,8 @@ public class Follower {
     public User getFollower() { return follower; }
 
     public void setFollower(User follower) { this.follower = follower; }
+
+    public LocalDateTime getFollowedAt() { return followedAt; }
+
+    public void setFollowedAt(LocalDateTime followedAt) { this.followedAt = followedAt; }
 }
