@@ -1,7 +1,13 @@
 package com.socialpetwork.user;
 
 // NOTE: Entity
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.socialpetwork.follower.Follower;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 
 public class User {
@@ -21,6 +27,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -37,6 +44,15 @@ public class User {
         this.username = username;
         this.password = password;
     }
+
+    // Relationships logic
+    // User following user
+    @OneToMany(mappedBy = "followedUser", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Follower> followers = new HashSet<>();
+
+    //user this user follows
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Follower> following = new HashSet<>();
 
     // Getters and Setters
     public Long getId(){
@@ -93,5 +109,21 @@ public class User {
 
     public void setProfileUrl(String profileUrl) {
         this.profileUrl = profileUrl;
+    }
+
+    public Set<Follower> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<Follower> followers) {
+        this.followers = followers;
+    }
+
+    public Set<Follower> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<Follower> following) {
+        this.following = following;
     }
 }
