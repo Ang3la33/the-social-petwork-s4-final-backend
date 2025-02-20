@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 // User can be found by email and username
-// each should be assiged a ID
+// each should be assigned an ID
 // User need to change name, birthday, email
 @Service
 public class UserService {
@@ -25,12 +25,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deleteUser(Long id) {
+    public boolean deleteUser(Long id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
             throw new UserException("No user found with the id.");
         }
         userRepository.delete(user);
+        return true;
     }
 
     public User getUserFromId(Long id) {
