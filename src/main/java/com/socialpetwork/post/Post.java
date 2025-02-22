@@ -3,6 +3,7 @@ package com.socialpetwork.post;
 import com.socialpetwork.user.User;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 public class Post {
@@ -25,9 +26,9 @@ public class Post {
     public Post() {}
 
     // Parameterized Constructor
-    public Post(String content, Timestamp createdAt, User user) {
+    public Post(String content, User user) {
         this.content = content;
-        this.createdAt = createdAt;
+        this.createdAt = Timestamp.valueOf(LocalDateTime.now());
         this.user = user;
     }
 
@@ -64,4 +65,13 @@ public class Post {
         this.user = user;
     }
 
+    public void setCreatedAt(LocalDateTime now) {
+    }
+
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

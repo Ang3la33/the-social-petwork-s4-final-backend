@@ -2,42 +2,51 @@ package com.socialpetwork.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@RequestMapping("/posts")
 public class PostController {
 
     @Autowired
     private PostService postService;
 
-    @GetMapping("/posts")
+    @GetMapping
     public List<Post> getAllPosts() {
         return postService.findAllPosts();
     }
 
-    @GetMapping("/post/{id}")
-    public Post getPostByID(@PathVariable long id) {
-        return postService.findPostById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Post> getPostById(@PathVariable long id) {
+        Post post = postService.findPostById(id);
+        return post != null ?
+                new ResponseEntity<>(post, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/posts/user/{userId}")
+    @GetMapping("/user/{userId}")
     public List<Post> getPostsByUserId(@PathVariable long userId) {
         return postService.findPostsByUserId(userId);
     }
 
-    @PostMapping("/post")
-    public Post createPost(@RequestBody Post newPost) {
-        return postService.createPost(newPost);
+    @PostMapping
+    public ResponseEntity<Post> createPost(@RequestBody Post post, @RequestParam long userId) {
+        Post createdPost = postService.createPost(post, userId);
+        return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
 
-    @PutMapping("/post/{id}")
-    public Post updatePost(@PathVariable long id, @RequestBody Post updatedPost) {
-        return postService.updatePost(id, updatedPost);
+    @PutMapping("/{id}")
+    public ResponseEntity<Post> updatePost(@PathVariable long id, @RequestBody Post post, @RequestParam long userId) {
+        Post updatedPost = postService.updatePost(id, post, userId);
+        return updatedPost != null ?
+                new ResponseEntity<>(updatedPost, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/post/{id}")
+    @DeleteMapping("/{id}")
     public String deletePost(@PathVariable long id) {
         boolean isDeleted = postService.deletePost(id);
         return isDeleted ? "Post successfully deleted" : "Post not found";
