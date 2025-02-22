@@ -1,5 +1,6 @@
 package com.socialpetwork.post;
 
+import com.socialpetwork.user.User;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 
@@ -10,20 +11,24 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto-increment feature
     private Long id; //primary key
 
-    private String content; //message body
+    @Column(nullable = false, length = 500) // Message body with a set max length of 500 chars
+    private String content;
 
-    private Timestamp createdAt; //time message is created
+    @Column(nullable = false, updatable = false) // Timestamp, not updatable
+    private Timestamp createdAt;
 
-    private Long userId; //links to User entity
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false) // Established many-to-one relationship with User
+    private User user;
 
     // Default Constructor
     public Post() {}
 
     // Parameterized Constructor
-    public Post(String content, Timestamp createdAt, Long userId) {
+    public Post(String content, Timestamp createdAt, User user) {
         this.content = content;
         this.createdAt = createdAt;
-        this.userId = userId;
+        this.user = user;
     }
 
     // Getters and Setters
@@ -51,12 +56,12 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUserId() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserId(User user) {
+        this.user = user;
     }
 
 }
