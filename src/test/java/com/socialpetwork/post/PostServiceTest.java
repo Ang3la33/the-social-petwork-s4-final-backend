@@ -1,5 +1,7 @@
 package com.socialpetwork.post;
 
+import com.socialpetwork.user.User;
+import com.socialpetwork.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -7,10 +9,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class PostServiceTest {
@@ -18,16 +22,28 @@ public class PostServiceTest {
     @Mock
     private PostRepository postRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private PostService postService;
 
     private Post samplePost;
+    private User sampleUser;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        samplePost = new Post("Testing post!", new Timestamp(System.currentTimeMillis()), 1L);
+
+        // Create Mock User
+        sampleUser = new User();
+        sampleUser.setId(1L);
+        sampleUser.setUsername("testUser");
+
+        // Create Mock Post by Mock User
+        samplePost = new Post("Testing post!", sampleUser);
         samplePost.setId(1L);
+        samplePost.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
     }
 
     @Test
@@ -40,10 +56,18 @@ public class PostServiceTest {
 
     @Test
     void testCreatePost() {
-        when(postRepository.save(samplePost)).thenReturn(samplePost);
-        Post createdPost = postService.createPost(samplePost);
-        assertNotNull(createdPost);
-        assertEquals("Testing post!", createdPost.getContent());
+       when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
+       when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
+           Post post = invocation.getArgument(0);
+           post.setId(1L);
+           return post;
+       });
+
+       Post createdPost = postService.createPost(samplePost, 1L);
+
+       assertNotNull(createdPost);
+       assertEquals("Testing post!", createdPost.getContent());
+       assertEquals(sampleUser, createdPost.getUser());
     }
 
     @Test
@@ -52,6 +76,7 @@ public class PostServiceTest {
         List<Post> postsFound = postService.findPostsByUserId(1L);
         assertNotNull(postsFound);
         assertEquals(1, postsFound.size());
+        assertEquals(sampleUser, postsFound.get(0).getUser());
     }
 
     @Test
