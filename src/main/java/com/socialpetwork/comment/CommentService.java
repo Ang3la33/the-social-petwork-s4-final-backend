@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-// commentId? userId? postId?
-// createComment - deleteComments - updateComment?
 @Service
 public class CommentService {
 
@@ -28,10 +26,8 @@ public class CommentService {
 
     public Comment findCommentFromId(long id) {
         return commentRepository.findFromId(id)
-                .orElseThrow(() -> new RuntimeException("No omment was found with the id"));
+                .orElseThrow(() -> new RuntimeException("No comment was found with the id"));
     }
-
-
 
     public Comment createComment(Comment newComment){
         return commentRepository.save(newComment);
@@ -42,7 +38,6 @@ public class CommentService {
                 .orElseThrow(() -> new RuntimeException("No comment found with the id."));
         commentRepository.delete(comment);
     }
-
 
     public Comment updateComment(long id, Comment updatedComment) {
         return commentRepository.findById(id)
@@ -55,7 +50,6 @@ public class CommentService {
                 })
                 .orElseThrow(() -> new RuntimeException("No comment was found with the id"));
     }
-
 
 
 }
