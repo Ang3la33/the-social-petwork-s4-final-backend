@@ -1,5 +1,7 @@
 package com.socialpetwork.comment;
 
+import com.socialpetwork.post.Post;
+import com.socialpetwork.user.User;
 import jakarta.persistence.*;
 
 import java.security.Timestamp;
@@ -12,7 +14,7 @@ public class Comment {
     @Column(name = "id")
     private Long id; // Primary Key
 
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Column(name = "header", nullable = false)
@@ -21,11 +23,19 @@ public class Comment {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "postedAt", nullable = false)
+    @Column(name = "posted_at", nullable = false)
     private Timestamp postedAt;
 
-    @Column(name = "postId", nullable = false)
+    @Column(name = "post_id", nullable = false)
     private Long postId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     // Constructor
     public Comment (){
@@ -57,6 +67,7 @@ public class Comment {
         this.userId = userId;
     }
 
+    // Not used? so also check
     public String getHeader(){
         return header;
     }
