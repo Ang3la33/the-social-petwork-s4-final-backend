@@ -17,9 +17,6 @@ public class Comment {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "header", nullable = false)
-    private String header;
-
     @Column(name = "content", nullable = false)
     private String content;
 
@@ -42,9 +39,8 @@ public class Comment {
     }
 
     // Parameterized Constructor
-    public Comment (Long userId, String header, String content, Timestamp postedAt, Long postId){
+    public Comment (Long userId, String content, Timestamp postedAt, Long postId){
         this.userId = userId;
-        this.header = header;
         this.content = content;
         this.postedAt = postedAt;
         this.postId = postId;
@@ -65,16 +61,6 @@ public class Comment {
 
     public void setUserId(Long userId){
         this.userId = userId;
-    }
-
-    // Not used? so also check
-    public String getHeader(){
-        return header;
-    }
-
-    public void setHeader(String header){
-        this.header = header;
-
     }
 
     public String getContent(){

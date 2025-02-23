@@ -1,6 +1,6 @@
 package com.socialpetwork.user;
 
-// NOTE: Entity
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.socialpetwork.follower.Follower;
 import jakarta.persistence.*;
@@ -45,12 +45,9 @@ public class User {
         this.password = password;
     }
 
-    // Relationships logic
-    // User following user
     @OneToMany(mappedBy = "followed_user", cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Follower> followers = new HashSet<>();
 
-    //user this user follows
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Follower> following = new HashSet<>();
 
@@ -95,6 +92,8 @@ public class User {
         this.username = username;
     }
 
+
+    // CHECK
     public String getPassword(){
         return password;
     }
@@ -110,6 +109,7 @@ public class User {
     public void setProfileUrl(String profileUrl) {
         this.profileUrl = profileUrl;
     }
+
 
     // Check since these are in follower entity
     public Set<Follower> getFollowers() {
