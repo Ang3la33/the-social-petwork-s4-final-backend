@@ -47,7 +47,7 @@ public class User {
 
     // Relationships logic
     // User following user
-    @OneToMany(mappedBy = "followedUser", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "followed_user", cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Follower> followers = new HashSet<>();
 
     //user this user follows
@@ -111,6 +111,7 @@ public class User {
         this.profileUrl = profileUrl;
     }
 
+    // Check since these are in follower entity
     public Set<Follower> getFollowers() {
         return followers;
     }

@@ -42,7 +42,7 @@ public class UserService {
         return user;
     }
 
-    public User getUserFromUser(String username){
+    public User getUserFromUsername(String username){
         User user = userRepository.findByUsername(username);
         if(user == null){
             throw new UserException("No user found with the username.");
