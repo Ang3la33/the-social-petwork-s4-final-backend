@@ -50,6 +50,4 @@ public class CommentService {
                 })
                 .orElseThrow(() -> new RuntimeException("No comment was found with the id"));
     }
-
-
 }

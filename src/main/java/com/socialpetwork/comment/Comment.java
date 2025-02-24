@@ -1,10 +1,7 @@
 package com.socialpetwork.comment;
 
-import com.socialpetwork.post.Post;
-import com.socialpetwork.user.User;
 import jakarta.persistence.*;
-
-import java.security.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 public class Comment {
@@ -21,73 +18,33 @@ public class Comment {
     private String content;
 
     @Column(name = "posted_at", nullable = false)
-    private Timestamp postedAt;
+    private LocalDateTime postedAt;
 
     @Column(name = "post_id", nullable = false)
     private Long postId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
-
-    // Constructor
-    public Comment (){
-    }
-
-    // Parameterized Constructor
-    public Comment (Long userId, String content, Timestamp postedAt, Long postId){
-        this.userId = userId;
+    // Corrected Constructor
+    public Comment(Long id, String content, Long userId, Long postId, LocalDateTime postedAt) {
+        this.id = id;
         this.content = content;
-        this.postedAt = postedAt;
+        this.userId = userId;
         this.postId = postId;
+        this.postedAt = (postedAt != null) ? postedAt : LocalDateTime.now();
     }
 
     // Getters and Setters
-    public Long getId(){
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id){
-        this.id = id;
-    }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
-    public Long getUserId(){
-        return userId;
-    }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 
-    public void setUserId(Long userId){
-        this.userId = userId;
-    }
+    public LocalDateTime getPostedAt() { return postedAt; }
+    public void setPostedAt(LocalDateTime postedAt) { this.postedAt = postedAt; }
 
-    public String getContent(){
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Timestamp getPostedAt(){
-        return postedAt;
-    }
-
-    public void setPostedAt(Timestamp postedAt){
-        this.postedAt = postedAt;
-    }
-
-    public Long getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Long postId) {
-        this.postId = postId;
-    }
-
-
-
-
+    public Long getPostId() { return postId; }
+    public void setPostId(Long postId) { this.postId = postId; }
 }
