@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class User {
     public User(){}
 
     // Parameterized Constructor
-    public User(String name, String birthday, String email,  String username, String password) {
+    public User(String name, String birthday, String email) {
         this.name = name;
         this.birthday = birthday;
         this.email = email;

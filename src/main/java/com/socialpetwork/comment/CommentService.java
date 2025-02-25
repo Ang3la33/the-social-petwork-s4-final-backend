@@ -1,7 +1,9 @@
 package com.socialpetwork.comment;
 
-import org.springframework.stereotype.Service;
+import com.socialpetwork.user.User;
+import com.socialpetwork.post.Post;
 
+import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -13,20 +15,18 @@ public class CommentService {
     private CommentRepository commentRepository;
 
     public List<Comment> findAllComments(){
-        return (List<Comment>) commentRepository.findAll();
+        return commentRepository.findAll();
     }
 
-    public List<Comment> findCommentsFromUserId(long userId) {
-        return commentRepository.findFromUserId(userId);
+    public Comment findCommentById(long id){
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No comments found"));
     }
-
-    public List<Comment> findCommentsFromPostId(long postId) {
-        return commentRepository.findFromPostId(postId);
+    public List<Comment> findCommentsByUser(User user){
+        return commentRepository.findByUser(user);
     }
-
-    public Comment findCommentFromId(long id) {
-        return commentRepository.findFromId(id)
-                .orElseThrow(() -> new RuntimeException("No comment was found with the id"));
+    public List<Comment> findCommentsByPost(Post post){
+        return commentRepository.findByPost(post);
     }
 
     public Comment createComment(Comment newComment){
@@ -35,19 +35,17 @@ public class CommentService {
 
     public void deleteComment(long id) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No comment found with the id."));
+                .orElseThrow(() -> new RuntimeException("No comments found"));
         commentRepository.delete(comment);
     }
 
-    public Comment updateComment(long id, Comment updatedComment) {
-        return commentRepository.findById(id)
-                .map(currentComment -> {
-                    currentComment.setContent(updatedComment.getContent());
-                    currentComment.setPostedAt(updatedComment.getPostedAt());
-                    currentComment.setUserId(updatedComment.getUserId());
-                    currentComment.setPostId(updatedComment.getPostId());
-                    return commentRepository.save(currentComment);
-                })
-                .orElseThrow(() -> new RuntimeException("No comment was found with the id"));
+    public Comment updateComment(long id, Comment updatedComment){
+        Comment comment = findCommentById(id);
+        comment.setContent(updatedComment.getContent());
+        comment.setPost(updatedComment.getPost());
+        comment.setUser(updatedComment.getUser());
+        comment.setPostedAt(updatedComment.getPostedAt());
+        return commentRepository.save(comment);
     }
+
 }

@@ -1,9 +1,12 @@
 package com.socialpetwork.comment;
 
+import com.socialpetwork.post.Post;
+import com.socialpetwork.user.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "comments")
 public class Comment {
 
     @Id
@@ -11,8 +14,13 @@ public class Comment {
     @Column(name = "id")
     private Long id; // Primary Key
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name ="post_id", nullable = false)
+    private Post post;
 
     @Column(name = "content", nullable = false)
     private String content;
@@ -20,36 +28,54 @@ public class Comment {
     @Column(name = "posted_at", nullable = false)
     private LocalDateTime postedAt;
 
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
 
-    // Corrected Constructor
-    public Comment(Long id, String content, Long userId, Long postId, LocalDateTime postedAt) {
+    public Comment(Long id, String content, User user, Post post, LocalDateTime postedAt) {
         this.id = id;
         this.content = content;
-        this.userId = userId;
-        this.postId = postId;
-        this.postedAt = (postedAt != null) ? postedAt : LocalDateTime.now();
+        this.user = user;
+        this.post = post;
+        this.postedAt = LocalDateTime.now();
     }
 
-    // No-arg constructor
-    public Comment() {
+    public Comment() {}
 
+    public Long getId() {
+        return id;
     }
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public User getUser() {
+        return user;
+    }
 
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-    public LocalDateTime getPostedAt() { return postedAt; }
-    public void setPostedAt(LocalDateTime postedAt) { this.postedAt = postedAt; }
+    public Post getPost() {
+        return post;
+    }
 
-    public Long getPostId() { return postId; }
-    public void setPostId(Long postId) { this.postId = postId; }
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public LocalDateTime getPostedAt() {
+        return postedAt;
+    }
+
+    public void setPostedAt(LocalDateTime postedAt) {
+        this.postedAt = postedAt;
+    }
 }
