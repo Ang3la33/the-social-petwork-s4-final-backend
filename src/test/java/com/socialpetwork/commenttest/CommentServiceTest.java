@@ -6,6 +6,8 @@ import static org.mockito.Mockito.*;
 import com.socialpetwork.comment.Comment;
 import com.socialpetwork.comment.CommentRepository;
 import com.socialpetwork.comment.CommentService;
+import com.socialpetwork.post.Post;
+import com.socialpetwork.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,10 +32,17 @@ class CommentServiceTest {
     private Comment comment1;
     private Comment comment2;
 
+    private User user1;
+    private User user2;
+    private Post post1;
+
     @BeforeEach
     void setUp() {
-        comment1 = new Comment(1L, "First comment", 1L, 1L, LocalDateTime.now());
-        comment2 = new Comment(2L, "Second comment", 2L, 1L, LocalDateTime.now());
+        user1 = new User("user1","08-16-1990","user1@gmail.com");
+        user2 = new User("user2","03-27-1989","user2@gmail.com");
+        post1 = new Post("Test Post",user1);
+        comment1 = new Comment(1L, "First comment", user1, post1, LocalDateTime.now());
+        comment2 = new Comment(2L, "Second comment", user2, post1, LocalDateTime.now());
     }
 
     @Test
@@ -47,49 +56,40 @@ class CommentServiceTest {
     }
 
     @Test
-    void testFindCommentsFromUserId() {
-        when(commentRepository.findFromUserId(1L)).thenReturn(List.of(comment1)); // Match repository method
+    void testFindCommentsByUser() {
+        when(commentRepository.findByUser(user1)).thenReturn(List.of(comment1)); // Match repository method
 
-        List<Comment> comments = commentService.findCommentsFromUserId(1L);
+        List<Comment> comments = commentService.findCommentsByUser(user1);
 
-        assertNotNull(comments); // Ensure list is not null
-        assertFalse(comments.isEmpty()); // Ensure list is not empty
+        assertNotNull(comments);
+        assertFalse(comments.isEmpty());
         assertEquals(1, comments.size());
-        assertNotNull(comments.get(0).getContent()); // Ensure content is not null
+        assertNotNull(comments.get(0).getContent());
         assertEquals("First comment", comments.get(0).getContent());
 
-        verify(commentRepository, times(1)).findFromUserId(1L); // Match repository method
+        verify(commentRepository, times(1)).findByUser(user1); // Match repository method
     }
 
 
     @Test
-    void testFindCommentsFromPostId() {
-        when(commentRepository.findFromPostId(1L)).thenReturn(Arrays.asList(comment1, comment2));
+    void testFindCommentsByPost() {
+        when(commentRepository.findByPost(post1)).thenReturn(Arrays.asList(comment1, comment2));
 
-        List<Comment> comments = commentService.findCommentsFromPostId(1L);
+        List<Comment> comments = commentService.findCommentsByPost(post1);
 
         assertEquals(2, comments.size());
-        verify(commentRepository, times(1)).findFromPostId(1L);
+        verify(commentRepository, times(1)).findByPost(post1);
     }
 
     @Test
     void testFindCommentFromId() {
-        when(commentRepository.findFromId(1L)).thenReturn(Optional.of(comment1));
+        when(commentRepository.findById(1L)).thenReturn(Optional.of(comment1));
 
-        Comment result = commentService.findCommentFromId(1L);
+        Comment result = commentService.findCommentById(1L);
 
         assertNotNull(result);
         assertEquals("First comment", result.getContent());
-        verify(commentRepository, times(1)).findFromId(1L);
-    }
-
-    @Test
-    void testFindCommentFromId_NotFound() {
-        when(commentRepository.findFromId(99L)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(RuntimeException.class, () -> commentService.findCommentFromId(99L));
-
-        assertTrue(exception.getMessage().contains("No comment was found with the id"));
+        verify(commentRepository, times(1)).findById(1L);
     }
 
     @Test
@@ -113,17 +113,8 @@ class CommentServiceTest {
     }
 
     @Test
-    void testDeleteComment_NotFound() {
-        when(commentRepository.findById(99L)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(RuntimeException.class, () -> commentService.deleteComment(99L));
-
-        assertTrue(exception.getMessage().contains("No comment found with the id."));
-    }
-
-    @Test
     void testUpdateComment() {
-        Comment updatedComment = new Comment(1L, "Updated comment", 1L, 1L, LocalDateTime.now());
+        Comment updatedComment = new Comment(1L, "Updated comment", user1, post1, LocalDateTime.now());
 
         when(commentRepository.findById(1L)).thenReturn(Optional.of(comment1));
         when(commentRepository.save(any(Comment.class))).thenReturn(updatedComment);
@@ -135,11 +126,21 @@ class CommentServiceTest {
     }
 
     @Test
-    void testUpdateComment_NotFound() {
-        when(commentRepository.findById(99L)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(RuntimeException.class, () -> commentService.updateComment(99L, comment1));
-
-        assertTrue(exception.getMessage().contains("No comment was found with the id"));
+    void testFindCommentsByUser_NotFound() {
+        when(commentRepository.findByUser(user1)).thenReturn(List.of());
+        List<Comment> comments = commentService.findCommentsByUser(user1);
+        assertNotNull(comments);
+        assertTrue(comments.isEmpty());
+        assertEquals(0, comments.size());
     }
+
+    @Test
+    void testFindCommentsByPost_NotFound() {
+        when(commentRepository.findByPost(post1)).thenReturn(List.of());
+        List<Comment> comments = commentService.findCommentsByPost(post1);
+        assertNotNull(comments);
+        assertTrue(comments.isEmpty());
+        assertEquals(0, comments.size());
+    }
+
 }

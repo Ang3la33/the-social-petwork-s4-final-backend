@@ -1,9 +1,13 @@
 package com.socialpetwork.comment;
 
+import com.socialpetwork.post.PostRepository;
+import com.socialpetwork.user.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/comments")
@@ -11,6 +15,12 @@ public class CommentController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @GetMapping
     public List<Comment> getAllComments() {
@@ -20,7 +30,7 @@ public class CommentController {
     @GetMapping("/{id}")
     public ResponseEntity<Comment> getCommentById(@PathVariable long id) {
         try {
-            Comment comment = commentService.findCommentFromId(id);
+            Comment comment = commentService.findCommentById(id);
             return ResponseEntity.ok(comment);
         } catch (RuntimeException error) {
             return ResponseEntity.notFound().build();
@@ -28,13 +38,17 @@ public class CommentController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<Comment> getCommentsByUserId(@PathVariable long userId) {
-        return commentService.findCommentsFromUserId(userId);
+    public ResponseEntity<List<Comment>> getCommentsByUserId(@PathVariable long userId) {
+        return userRepository.findById(userId)
+                .map(user -> ResponseEntity.ok(commentService.findCommentsByUser(user)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/post/{postId}")
-    public List<Comment> getCommentsByPostId(@PathVariable long postId) {
-        return commentService.findCommentsFromPostId(postId);
+    public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable long postId) {
+        return postRepository.findById(postId)
+                .map(post -> ResponseEntity.ok(commentService.findCommentsByPost(post)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
