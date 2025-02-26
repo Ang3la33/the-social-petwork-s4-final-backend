@@ -45,7 +45,7 @@ public class User {
         this.password = password;
     }
 
-    @OneToMany(mappedBy = "followed_user", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "followedUser", cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Follower> followers = new HashSet<>();
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)

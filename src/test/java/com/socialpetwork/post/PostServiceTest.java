@@ -72,7 +72,7 @@ public class PostServiceTest {
 
     @Test
     void testFindPostsByUserId() {
-        when(postRepository.findByUserId(1L)).thenReturn(List.of(samplePost));
+        when(postRepository.findByUser_Id(1L)).thenReturn(List.of(samplePost));
         List<Post> postsFound = postService.findPostsByUserId(1L);
         assertNotNull(postsFound);
         assertEquals(1, postsFound.size());
