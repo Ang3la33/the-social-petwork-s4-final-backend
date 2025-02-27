@@ -15,11 +15,11 @@ public class Comment {
     private Long id; // Primary Key
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id",referencedColumnName = "id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name ="post_id", nullable = false)
+    @JoinColumn(name ="post_id",referencedColumnName = "id", nullable = false)
     private Post post;
 
     @Column(name = "content", nullable = false)
@@ -34,7 +34,7 @@ public class Comment {
         this.content = content;
         this.user = user;
         this.post = post;
-        this.postedAt = LocalDateTime.now();
+        this.postedAt = postedAt;
     }
 
     public Comment() {}

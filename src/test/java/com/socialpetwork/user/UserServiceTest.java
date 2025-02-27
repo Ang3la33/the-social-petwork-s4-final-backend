@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
+
     @Mock
     private UserRepository userRepository;
 
@@ -19,26 +20,37 @@ public class UserServiceTest {
     private UserService userService;
 
     private User sampleUser;
-    private String nameTest = "Deino Dog";
-    private String birthdayTest = "2020-07-20";
-    private String emailTest = "deino@dog.com";
-    private String usernameTest = "deinodog";
-    private String passwordTest = "treats123";
+
+    private final String nameTest = "Deino Dog";
+    private final String birthdayTest = "2020-07-20";
+    private final String emailTest = "deino@dog.com";
+    private final String usernameTest = "deinodog";
+    private final String passwordTest = "treats123";
+    private final String profileUrlTest = "https://example.com/profile/deinodog";
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        sampleUser = new User(nameTest, birthdayTest, emailTest);
+
+        // Initialize sampleUser with all required fields
+        sampleUser = new User(nameTest, birthdayTest, emailTest, usernameTest, passwordTest, profileUrlTest);
         sampleUser.setId(1L);
     }
 
     @Test
     void createNewUserTest() {
-        when(userRepository.save(sampleUser)).thenReturn(sampleUser);
+        when(userRepository.save(any(User.class))).thenReturn(sampleUser);
+
         User createdUser = userService.createNewUser(sampleUser);
+
         assertNotNull(createdUser);
-        assertEquals("Deino Dog", createdUser.getName());
-        assertEquals("deino@dog.com", createdUser.getEmail());
+        assertEquals(nameTest, createdUser.getName());
+        assertEquals(emailTest, createdUser.getEmail());
+        assertEquals(usernameTest, createdUser.getUsername());
+        assertEquals(passwordTest, createdUser.getPassword());
+        assertEquals(profileUrlTest, createdUser.getProfileUrl());
+
+        verify(userRepository, times(1)).save(sampleUser);
     }
 
     @Test
@@ -48,6 +60,7 @@ public class UserServiceTest {
         doNothing().when(userRepository).delete(sampleUser);
 
         boolean isDeleted = userService.deleteUser(userId);
+
         assertTrue(isDeleted);
         verify(userRepository, times(1)).delete(sampleUser);
     }
@@ -55,18 +68,25 @@ public class UserServiceTest {
     @Test
     void findUserFromIdTest() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
+
         User userFound = userService.getUserFromId(1L);
+
         assertNotNull(userFound);
-        assertEquals("Deino Dog", userFound.getName());
+        assertEquals(nameTest, userFound.getName());
+        assertEquals(usernameTest, userFound.getUsername());
+        verify(userRepository, times(1)).findById(1L);
     }
 
     @Test
     void updateUserTest() {
         sampleUser.setName("Updated Dog");
         when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
-        when(userRepository.save(sampleUser)).thenReturn(sampleUser);
+        when(userRepository.save(any(User.class))).thenReturn(sampleUser);
+
         User updatedUser = userService.updateUser(1L, sampleUser);
+
         assertNotNull(updatedUser);
         assertEquals("Updated Dog", updatedUser.getName());
+        verify(userRepository, times(1)).save(sampleUser);
     }
 }

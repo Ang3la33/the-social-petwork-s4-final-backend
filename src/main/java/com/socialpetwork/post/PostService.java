@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostService {
@@ -24,11 +23,11 @@ public class PostService {
     }
 
     public List<Post> findPostsByUserId(long userId) {
-        return postRepository.findByUserId(userId);
+        return postRepository.findByUser_Id(userId);
     }
 
-    public Post createPost(Post newPost, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public Post createPost(Post newPost) {
+        User user = userRepository.findById(newPost.getUser().getId()).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         newPost.setUserId(user);
         return postRepository.save(newPost);
@@ -58,4 +57,5 @@ public class PostService {
         return false;
 
     }
+
 }
