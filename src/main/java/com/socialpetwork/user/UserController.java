@@ -29,11 +29,14 @@ public class UserController {
 
     // 🔐 User Login
     @PostMapping("/login")
-    public ResponseEntity<Long> loginUser(@RequestBody String username) {
+    public ResponseEntity<Long> loginUser(@RequestBody Map<String, String> loginData) {
+        String username = loginData.get("username");
+        String password = loginData.get("password");
+
         System.out.println("Received login request for username: " + username);
 
-        // Corrected login method to fetch user ID by username
-        Long userId = userService.getUserIdByUsername(username.trim().replace("\"", ""));
+        // Updated login method to fetch user ID by username and password
+        Long userId = userService.getUserIdByUsernameAndPassword(username, password);
 
         if (userId != null) {
             return ResponseEntity.ok(userId);
@@ -41,6 +44,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
 
     // 👥 Get all users
     @GetMapping
@@ -92,5 +96,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+
 }
 

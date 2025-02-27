@@ -26,14 +26,14 @@ public class UserServiceTest {
     private final String emailTest = "deino@dog.com";
     private final String usernameTest = "deinodog";
     private final String passwordTest = "treats123";
-    private final String profileUrlTest = "https://example.com/profile/deinodog";
+
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
         // Initialize sampleUser with all required fields
-        sampleUser = new User(nameTest, birthdayTest, emailTest, usernameTest, passwordTest, profileUrlTest);
+        sampleUser = new User(nameTest, birthdayTest, emailTest, usernameTest, passwordTest);
         sampleUser.setId(1L);
     }
 
@@ -48,7 +48,6 @@ public class UserServiceTest {
         assertEquals(emailTest, createdUser.getEmail());
         assertEquals(usernameTest, createdUser.getUsername());
         assertEquals(passwordTest, createdUser.getPassword());
-        assertEquals(profileUrlTest, createdUser.getProfileUrl());
 
         verify(userRepository, times(1)).save(sampleUser);
     }

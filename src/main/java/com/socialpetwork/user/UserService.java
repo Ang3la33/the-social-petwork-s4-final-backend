@@ -56,7 +56,6 @@ public class UserService {
         user.setName(userInfo.getName());
         user.setBirthday(userInfo.getBirthday());
         user.setEmail(userInfo.getEmail());
-        user.setProfileUrl(userInfo.getProfileUrl());
 
         return userRepository.save(user);
     }
@@ -66,14 +65,15 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    // Get User ID by Username (For Login)
-    public Long getUserIdByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UserException("No user found with the username.");
+    // 🔍 Get User ID by Username and Password
+    public Long getUserIdByUsernameAndPassword(String username, String password) {
+        User user = userRepository.findByUsernameAndPassword(username, password);
+        if (user != null) {
+            return user.getId();
         }
-        return user.getId();
+        return null;
     }
+
 }
 
 
