@@ -15,11 +15,11 @@ public class Comment {
     private Long id; // Primary Key
 
     @ManyToOne
-    @JoinColumn(name = "user_id",referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name ="post_id",referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
     private Post post;
 
     @Column(name = "content", nullable = false)
@@ -28,16 +28,24 @@ public class Comment {
     @Column(name = "posted_at", nullable = false)
     private LocalDateTime postedAt;
 
+    public Comment() {
+        // Default constructor
+    }
 
     public Comment(Long id, String content, User user, Post post, LocalDateTime postedAt) {
         this.id = id;
         this.content = content;
         this.user = user;
         this.post = post;
-        this.postedAt = postedAt;
+        this.postedAt = postedAt != null ? postedAt : LocalDateTime.now();
     }
 
-    public Comment() {}
+    @PrePersist
+    protected void onCreate() {
+        if (this.postedAt == null) {
+            this.postedAt = LocalDateTime.now();
+        }
+    }
 
     public Long getId() {
         return id;

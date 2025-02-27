@@ -1,39 +1,46 @@
 package com.socialpetwork.post;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.socialpetwork.user.User;
 import jakarta.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "posts")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(nullable = false, length = 500)
+    @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(nullable = false, updatable = false)
-    private Timestamp createdAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"posts", "followers", "following", "password", "hibernateLazyInitializer"})
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
-    public Post() {}
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime createdAt;
+
+    public Post() {
+        // Default constructor
+    }
 
     public Post(String content, User user) {
         this.content = content;
-        this.createdAt = Timestamp.valueOf(LocalDateTime.now());
         this.user = user;
+        this.createdAt = LocalDateTime.now(); // Automatically sets the timestamp
     }
 
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -50,14 +57,6 @@ public class Post {
         this.content = content;
     }
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public User getUser() {
         return user;
     }
@@ -65,4 +64,14 @@ public class Post {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
+
+

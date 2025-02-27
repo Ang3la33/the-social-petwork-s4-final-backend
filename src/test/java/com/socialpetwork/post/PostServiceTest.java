@@ -43,7 +43,7 @@ public class PostServiceTest {
         // Create Mock Post by Mock User
         samplePost = new Post("Testing post!", sampleUser);
         samplePost.setId(1L);
-        samplePost.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        samplePost.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()).toLocalDateTime());
     }
 
     @Test

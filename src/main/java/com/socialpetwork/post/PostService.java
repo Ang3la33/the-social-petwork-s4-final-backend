@@ -48,7 +48,7 @@ public class PostService {
 
         if (postToUpdate != null) {
             postToUpdate.setContent(updatedPost.getContent());
-            postToUpdate.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+            postToUpdate.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()).toLocalDateTime());
 
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
