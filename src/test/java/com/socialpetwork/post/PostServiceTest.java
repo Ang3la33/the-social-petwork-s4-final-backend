@@ -63,7 +63,7 @@ public class PostServiceTest {
            return post;
        });
 
-       Post createdPost = postService.createPost(samplePost, 1L);
+       Post createdPost = postService.createPost(samplePost);
 
        assertNotNull(createdPost);
        assertEquals("Testing post!", createdPost.getContent());

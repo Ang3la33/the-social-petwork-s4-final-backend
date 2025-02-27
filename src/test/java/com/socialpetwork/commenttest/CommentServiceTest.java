@@ -38,8 +38,8 @@ class CommentServiceTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User("user1","08-16-1990","user1@gmail.com");
-        user2 = new User("user2","03-27-1989","user2@gmail.com");
+        user1 = new User();
+        user2 = new User();
         post1 = new Post("Test Post",user1);
         comment1 = new Comment(1L, "First comment", user1, post1, LocalDateTime.now());
         comment2 = new Comment(2L, "Second comment", user2, post1, LocalDateTime.now());
