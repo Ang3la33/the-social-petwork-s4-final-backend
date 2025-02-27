@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DiffGenerationConfig" isInitGenerateDdl="true">
+    <option name="initGenerateDdl" value="true" />
+    <option name="sourceModelValue" value="Social-Petwork-Server:entityManagerFactory" />
+    <option name="targetDbValue" value="36fd2c1a-47d9-4fb2-b507-416f29230484" />
+  </component>
+</project>

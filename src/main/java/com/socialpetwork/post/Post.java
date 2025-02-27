@@ -1,5 +1,6 @@
 package com.socialpetwork.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.socialpetwork.user.User;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
@@ -7,33 +8,32 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "posts")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //auto-increment feature
-    private Long id; //primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(nullable = false, length = 500) // Message body with a set max length of 500 chars
+    @Column(nullable = false, length = 500)
     private String content;
 
-    @Column(nullable = false, updatable = false) // Timestamp, not updatable
+    @Column(nullable = false, updatable = false)
     private Timestamp createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // Established many-to-one relationship with User
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"posts", "followers", "following", "password", "hibernateLazyInitializer"})
     private User user;
 
-    // Default Constructor
     public Post() {}
 
-    // Parameterized Constructor
     public Post(String content, User user) {
         this.content = content;
         this.createdAt = Timestamp.valueOf(LocalDateTime.now());
         this.user = user;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -58,20 +58,10 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    public User getUserId() {
-        return user;
-    }
-
-    public void setUserId(User user) {
-        this.user = user;
-    }
-
-    public void setCreatedAt(LocalDateTime now) {
-    }
-
     public User getUser() {
         return user;
     }
+
     public void setUser(User user) {
         this.user = user;
     }

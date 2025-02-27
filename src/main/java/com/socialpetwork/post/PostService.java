@@ -5,12 +5,16 @@ import com.socialpetwork.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class PostService {
+
     @Autowired
     private PostRepository postRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -27,22 +31,29 @@ public class PostService {
     }
 
     public Post createPost(Post newPost) {
-        User user = userRepository.findById(newPost.getUser().getId()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if (newPost.getUser() == null || newPost.getUser().getId() == null) {
+            throw new IllegalArgumentException("User ID must not be null");
+        }
 
-        newPost.setUserId(user);
+        User user = userRepository.findById(newPost.getUser().getId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        newPost.setUser(user);
         return postRepository.save(newPost);
     }
+
 
     public Post updatePost(long id, Post updatedPost, Long userId) {
         Post postToUpdate = findPostById(id);
 
         if (postToUpdate != null) {
             postToUpdate.setContent(updatedPost.getContent());
-            postToUpdate.setCreatedAt(updatedPost.getCreatedAt());
+            postToUpdate.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
 
-            User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-            postToUpdate.setUserId(user);
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+            postToUpdate.setUser(user);
             return postRepository.save(postToUpdate);
         }
 
@@ -55,7 +66,6 @@ public class PostService {
             return true;
         }
         return false;
-
     }
-
 }
+
