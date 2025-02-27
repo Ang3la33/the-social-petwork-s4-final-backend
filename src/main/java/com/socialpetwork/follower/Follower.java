@@ -1,7 +1,9 @@
 package com.socialpetwork.follower;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.socialpetwork.user.User;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,17 +14,18 @@ public class Follower {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "followed_user_id", nullable = false)
+    @JsonIgnore
     private User followedUser; // The user who is being followed
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follower_id", nullable = false)
+    @JsonIgnore
     private User follower; // The user who follows
 
     @Column(nullable = false)
     private LocalDateTime followedAt;
-
 
     // Default constructor
     public Follower() {
@@ -36,19 +39,35 @@ public class Follower {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public User getFollowedUser() { return followedUser; }
+    public User getFollowedUser() {
+        return followedUser;
+    }
 
-    public void setFollowedUser(User followedUser) { this.followedUser = followedUser; }
+    public void setFollowedUser(User followedUser) {
+        this.followedUser = followedUser;
+    }
 
-    public User getFollower() { return follower; }
+    public User getFollower() {
+        return follower;
+    }
 
-    public void setFollower(User follower) { this.follower = follower; }
+    public void setFollower(User follower) {
+        this.follower = follower;
+    }
 
-    public LocalDateTime getFollowedAt() { return followedAt; }
+    public LocalDateTime getFollowedAt() {
+        return followedAt;
+    }
 
-    public void setFollowedAt(LocalDateTime followedAt) { this.followedAt = followedAt; }
+    public void setFollowedAt(LocalDateTime followedAt) {
+        this.followedAt = followedAt;
+    }
 }
