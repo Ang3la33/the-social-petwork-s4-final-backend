@@ -22,7 +22,7 @@ public class FollowerController {
      */
     @PostMapping("/{id}/follow/{targetId}")
     public ResponseEntity<String> followUser(@PathVariable Long id, @PathVariable Long targetId) {
-        String response = followerService.followUser(targetId, id);
+        String response = followerService.followUser(id, targetId);
         return ResponseEntity.ok(response);
     }
 
