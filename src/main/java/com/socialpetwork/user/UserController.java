@@ -1,11 +1,13 @@
 package com.socialpetwork.user;
 
+import com.socialpetwork.post.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -17,13 +19,15 @@ public class UserController {
 
     // 🆕 Register a new user
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User newUser) {
+    public ResponseEntity<?> registerUser(@RequestBody User newUser) {
         System.out.println("Received POST request to register a new user: " + newUser);
-        User createdUser = userService.createNewUser(newUser);
-        if (createdUser != null) {
+        try {
+            User createdUser = userService.createNewUser(newUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (UserException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
 
@@ -35,7 +39,6 @@ public class UserController {
 
         System.out.println("Received login request for username: " + username);
 
-        // Updated login method to fetch user ID by username and password
         Long userId = userService.getUserIdByUsernameAndPassword(username, password);
 
         if (userId != null) {
@@ -44,7 +47,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
 
     // 👥 Get all users
     @GetMapping
@@ -60,7 +62,7 @@ public class UserController {
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -71,18 +73,20 @@ public class UserController {
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
     // ✏️ Update user information
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userInfo) {
-        User updatedUser = userService.updateUser(id, userInfo);
-        if (updatedUser != null) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User userInfo) {
+        try {
+            User updatedUser = userService.updateUser(id, userInfo);
             return ResponseEntity.ok(updatedUser);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (UserException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
 
@@ -97,6 +101,16 @@ public class UserController {
         }
     }
 
+    // 📄 Get all posts by a specific user
+    @GetMapping("/{userId}/posts")
+    public ResponseEntity<List<Post>> getPostsByUser(@PathVariable Long userId) {
+        List<Post> posts = userService.getPostsByUser(userId);
+        if (!posts.isEmpty()) {
+            return ResponseEntity.ok(posts);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
 }
 

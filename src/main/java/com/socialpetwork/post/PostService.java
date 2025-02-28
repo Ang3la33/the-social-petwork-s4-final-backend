@@ -27,7 +27,7 @@ public class PostService {
     }
 
     public List<Post> findPostsByUserId(long userId) {
-        return postRepository.findByUser_Id(userId);
+        return postRepository.findByUserId(userId);
     }
 
     public Post createPost(Post newPost) {
