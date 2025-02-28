@@ -22,7 +22,19 @@ public class FollowerController {
      */
     @PostMapping("/{id}/follow/{targetId}")
     public ResponseEntity<String> followUser(@PathVariable Long id, @PathVariable Long targetId) {
-        String response = followerService.followUser(id, targetId);
+        String response = followerService.followUser(id, targetId); // ✅ Corrected parameter order
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Endpoint to unfollow a user.
+     * @param id The ID of the user who is unfollowing.
+     * @param targetId The ID of the user to be unfollowed.
+     * @return Response message indicating the unfollow status.
+     */
+    @DeleteMapping("/{id}/unfollow/{targetId}")
+    public ResponseEntity<String> unfollowUser(@PathVariable Long id, @PathVariable Long targetId) {
+        String response = followerService.unfollowUser(targetId, id); // ✅ Corrected parameter order
         return ResponseEntity.ok(response);
     }
 
@@ -48,3 +60,4 @@ public class FollowerController {
         return ResponseEntity.ok(following);
     }
 }
+

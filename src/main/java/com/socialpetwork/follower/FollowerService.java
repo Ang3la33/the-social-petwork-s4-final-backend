@@ -28,24 +28,29 @@ public class FollowerService {
         Optional<User> follower = userRepository.findById(followerId);
 
         if (followedUser.isPresent() && follower.isPresent()) {
-            Follower newFollower = new Follower(follower.get(), followedUser.get());
+            // Correct the order of parameters
+            Follower newFollower = new Follower(followedUser.get(), follower.get());
             followerRepository.save(newFollower);
-            return "✅ Successfully followed the user.";
+            System.out.println("🛠️ Debug: Follow relationship saved in the database.");
+            return "✅ Successfully followed " + followedUser.get().getUsername();
         } else {
             return "❌ User not found.";
         }
     }
 
-
     // Unfollow a user
     public String unfollowUser(Long followedUserId, Long followerId) {
         Optional<Follower> relationship = followerRepository.findByFollowedUserIdAndFollowerId(followedUserId, followerId);
+
         if (relationship.isPresent()) {
+            String unfollowedUsername = relationship.get().getFollowedUser().getUsername(); // Get the username of the unfollowed user
             followerRepository.delete(relationship.get());
-            return "Successfully unfollowed the user.";
+            return "✅ Successfully unfollowed " + unfollowedUsername;
         }
-        return "You are not following this user.";
+
+        return "❌ You are not following this user.";
     }
+
 
     // Get all followers of a user
     public List<Follower> getFollowers(Long userId) {
