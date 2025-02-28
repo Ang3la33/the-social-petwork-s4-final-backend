@@ -52,6 +52,7 @@ public class UserServiceTest {
         verify(userRepository, times(1)).save(sampleUser);
     }
 
+    // changed
     @Test
     void deleteUserTest() {
         Long userId = 1L;
