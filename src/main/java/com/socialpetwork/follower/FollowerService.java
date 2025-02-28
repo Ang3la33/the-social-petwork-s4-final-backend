@@ -19,22 +19,23 @@ public class FollowerService {
     }
 
     // Follow a user
-    public String followUser(Long followedUserId, Long followerId) {
+    public String followUser(Long followerId, Long followedUserId) {
         if (followerRepository.existsByFollowedUserIdAndFollowerId(followedUserId, followerId)) {
-            return "You are already following this user.";
+            return "❌ You are already following this user.";
         }
 
         Optional<User> followedUser = userRepository.findById(followedUserId);
         Optional<User> follower = userRepository.findById(followerId);
 
         if (followedUser.isPresent() && follower.isPresent()) {
-            Follower newFollower = new Follower(followedUser.get(), follower.get());
+            Follower newFollower = new Follower(follower.get(), followedUser.get());
             followerRepository.save(newFollower);
-            return "Successfully followed the user.";
+            return "✅ Successfully followed the user.";
         } else {
-            return "User not found.";
+            return "❌ User not found.";
         }
     }
+
 
     // Unfollow a user
     public String unfollowUser(Long followedUserId, Long followerId) {
