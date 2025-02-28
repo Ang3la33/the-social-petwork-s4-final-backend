@@ -43,63 +43,49 @@ class FollowerServiceTest {
 
     @Test
     void testFollowUser_Success() {
-        System.out.println("Running test: testFollowUser_Success");
-        when(followerRepository.existsByFollowedUserIdAndFollowerId(1L, 2L)).thenReturn(false);
+        when(followerRepository.existsByFollowedUserIdAndFollowerId(2L, 1L)).thenReturn(false);  // user1 follows user2
         when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
         when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
-
         String result = followerService.followUser(1L, 2L);
-        System.out.println("Result: " + result);
 
-        assertEquals("Successfully followed the user.", result);
+        assertEquals("✅ Successfully followed " + user2.getUsername(), result);
         verify(followerRepository, times(1)).save(any(Follower.class));
     }
 
     @Test
     void testFollowUser_AlreadyFollowing() {
-        System.out.println("Running test: testFollowUser_AlreadyFollowing");
-        when(followerRepository.existsByFollowedUserIdAndFollowerId(1L, 2L)).thenReturn(true);
-
+        when(followerRepository.existsByFollowedUserIdAndFollowerId(2L, 1L)).thenReturn(true);
         String result = followerService.followUser(1L, 2L);
-        System.out.println("Result: " + result);
 
-        assertEquals("You are already following this user.", result);
+        assertEquals("❌ You are already following this user.", result); // need same wording
         verify(followerRepository, never()).save(any(Follower.class));
     }
 
     @Test
     void testFollowUser_UserNotFound() {
-        System.out.println("Running test: testFollowUser_UserNotFound");
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-
+        when(userRepository.findById(1L)).thenReturn(Optional.empty()); // emtpy?
+        when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
         String result = followerService.followUser(1L, 2L);
-        System.out.println("Result: " + result);
 
-        assertEquals("User not found.", result);
+        assertEquals("❌ User not found.", result);
         verify(followerRepository, never()).save(any(Follower.class));
     }
 
     @Test
     void testUnfollowUser_Success() {
-        System.out.println("Running test: testUnfollowUser_Success");
-        when(followerRepository.findByFollowedUserIdAndFollowerId(1L, 2L)).thenReturn(Optional.of(follower));
+        when(followerRepository.findByFollowedUserIdAndFollowerId(2L, 1L)).thenReturn(Optional.of(follower));
+        String result = followerService.unfollowUser(2L, 1L);
 
-        String result = followerService.unfollowUser(1L, 2L);
-        System.out.println("Result: " + result);
-
-        assertEquals("Successfully unfollowed the user.", result);
+        assertEquals("✅ Successfully unfollowed " + user2.getUsername(), result);
         verify(followerRepository, times(1)).delete(follower);
     }
 
     @Test
     void testUnfollowUser_NotFollowing() {
-        System.out.println("Running test: testUnfollowUser_NotFollowing");
-        when(followerRepository.findByFollowedUserIdAndFollowerId(1L, 2L)).thenReturn(Optional.empty());
+        when(followerRepository.findByFollowedUserIdAndFollowerId(2L, 1L)).thenReturn(Optional.empty());
+        String result = followerService.unfollowUser(2L, 1L);
 
-        String result = followerService.unfollowUser(1L, 2L);
-        System.out.println("Result: " + result);
-
-        assertEquals("You are not following this user.", result);
+        assertEquals("❌ You are not following this user.", result);   // need exact wording
         verify(followerRepository, never()).delete(any(Follower.class));
     }
 
