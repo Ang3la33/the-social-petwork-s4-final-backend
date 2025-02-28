@@ -52,17 +52,27 @@ public class UserServiceTest {
         verify(userRepository, times(1)).save(sampleUser);
     }
 
+    // changed
     @Test
     void deleteUserTest() {
         Long userId = 1L;
-        when(userRepository.findById(userId)).thenReturn(Optional.of(sampleUser));
-        doNothing().when(userRepository).delete(sampleUser);
+        String name = "Test User";
+        String birthday = "2001-02-11";
+        String email = "testuser@example.com";
+        String username = "testuser";
+        String password = "password22";
+        User user = new User(name, birthday, email, username, password);
+        user.setId(userId);
 
-        boolean isDeleted = userService.deleteUser(userId);
+        when(userRepository.existsById(userId)).thenReturn(true);
 
-        assertTrue(isDeleted);
-        verify(userRepository, times(1)).delete(sampleUser);
+        boolean result = userService.deleteUser(userId);
+        assertTrue(result, "User should be deleted");
+        verify(userRepository, times(1)).deleteById(userId);
     }
+
+
+
 
     @Test
     void findUserFromIdTest() {
