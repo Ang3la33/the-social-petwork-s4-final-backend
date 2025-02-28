@@ -54,11 +54,31 @@ public class FollowerService {
 
     // Get all followers of a user
     public List<Follower> getFollowers(Long userId) {
-        return followerRepository.findByFollowedUserId(userId);
+        List<Follower> followers = followerRepository.findByFollowedUserId(userId);
+
+        // Add debug logs to verify the populated data
+        followers.forEach(f -> {
+            System.out.println("🛠️ Debug: Follower ID: " + f.getFollower().getId());
+            System.out.println("🛠️ Debug: Follower Username: " + f.getFollower().getUsername());
+            System.out.println("🛠️ Debug: Followed User ID: " + f.getFollowedUser().getId());
+        });
+
+        return followers;
     }
+
 
     // Get all users a specific user is following
     public List<Follower> getFollowing(Long userId) {
-        return followerRepository.findByFollowerId(userId);
+        List<Follower> following = followerRepository.findByFollowerId(userId);
+
+        // Add debug logs to verify the populated data
+        following.forEach(f -> {
+            System.out.println("🛠️ Debug: Follower ID: " + f.getFollower().getId());
+            System.out.println("🛠️ Debug: Followed User ID: " + f.getFollowedUser().getId());
+        });
+
+        return following;
     }
+
+
 }

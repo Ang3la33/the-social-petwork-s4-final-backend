@@ -14,12 +14,12 @@ public class Follower {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "followed_user_id", nullable = false)
     @JsonIgnore
     private User followedUser; // The user who is being followed
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "follower_id", nullable = false)
     @JsonIgnore
     private User follower; // The user who follows
