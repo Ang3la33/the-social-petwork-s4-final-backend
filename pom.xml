@@ -99,8 +99,7 @@
                     <target>23</target>
                 </configuration>
             </plugin>
-
         </plugins>
-    </build>
+</build>
 
 </project>
