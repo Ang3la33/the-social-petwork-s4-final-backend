@@ -1,4 +1,4 @@
-package com.socialpetwork.post;
+package com.socialpetwork.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

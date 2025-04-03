@@ -1,6 +1,5 @@
-package com.socialpetwork.post;
+package com.socialpetwork.entity;
 
-import com.socialpetwork.user.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

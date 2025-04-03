@@ -1,4 +1,4 @@
-package com.socialpetwork.user;
+package com.socialpetwork.auth;
 
 public class LoginRequest {
     private String username;

@@ -1,7 +1,6 @@
-package com.socialpetwork.follower;
+package com.socialpetwork.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.socialpetwork.user.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

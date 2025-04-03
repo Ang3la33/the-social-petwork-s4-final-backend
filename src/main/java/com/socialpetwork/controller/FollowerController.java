@@ -1,5 +1,7 @@
-package com.socialpetwork.follower;
+package com.socialpetwork.controller;
 
+import com.socialpetwork.entity.Follower;
+import com.socialpetwork.service.FollowerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;

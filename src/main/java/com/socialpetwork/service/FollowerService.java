@@ -1,7 +1,9 @@
-package com.socialpetwork.follower;
+package com.socialpetwork.service;
 
-import com.socialpetwork.user.User;
-import com.socialpetwork.user.UserRepository;
+import com.socialpetwork.entity.Follower;
+import com.socialpetwork.entity.User;
+import com.socialpetwork.repository.FollowerRepository;
+import com.socialpetwork.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

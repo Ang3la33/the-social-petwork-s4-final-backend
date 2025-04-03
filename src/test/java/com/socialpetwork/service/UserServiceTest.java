@@ -1,5 +1,7 @@
-package com.socialpetwork.user;
+package com.socialpetwork.service;
 
+import com.socialpetwork.entity.User;
+import com.socialpetwork.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

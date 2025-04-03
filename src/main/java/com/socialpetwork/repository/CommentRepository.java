@@ -1,7 +1,8 @@
-package com.socialpetwork.comment;
+package com.socialpetwork.repository;
 
-import com.socialpetwork.user.User;
-import com.socialpetwork.post.Post;
+import com.socialpetwork.entity.Comment;
+import com.socialpetwork.entity.User;
+import com.socialpetwork.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

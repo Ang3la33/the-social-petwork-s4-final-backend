@@ -1,7 +1,9 @@
-package com.socialpetwork.followertest;
+package com.socialpetwork.service;
 
-import com.socialpetwork.follower.*;
-import com.socialpetwork.user.*;
+import com.socialpetwork.entity.Follower;
+import com.socialpetwork.entity.User;
+import com.socialpetwork.repository.FollowerRepository;
+import com.socialpetwork.repository.UserRepository;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

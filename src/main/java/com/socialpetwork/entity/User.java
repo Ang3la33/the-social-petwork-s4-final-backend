@@ -1,6 +1,5 @@
-package com.socialpetwork.user;
+package com.socialpetwork.entity;
 
-import com.socialpetwork.follower.Follower;
 import jakarta.persistence.*;
 
 import java.util.HashSet;

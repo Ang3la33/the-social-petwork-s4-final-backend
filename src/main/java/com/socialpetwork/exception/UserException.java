@@ -1,4 +1,4 @@
-package com.socialpetwork.user;
+package com.socialpetwork.exception;
 
 public class UserException extends RuntimeException {
     // NOTE: double checks to see if it works

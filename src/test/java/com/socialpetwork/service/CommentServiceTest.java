@@ -1,13 +1,12 @@
-package com.socialpetwork.commenttest;
+package com.socialpetwork.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.socialpetwork.comment.Comment;
-import com.socialpetwork.comment.CommentRepository;
-import com.socialpetwork.comment.CommentService;
-import com.socialpetwork.post.Post;
-import com.socialpetwork.user.User;
+import com.socialpetwork.entity.Comment;
+import com.socialpetwork.repository.CommentRepository;
+import com.socialpetwork.entity.Post;
+import com.socialpetwork.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

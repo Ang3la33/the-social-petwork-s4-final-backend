@@ -1,7 +1,9 @@
-package com.socialpetwork.comment;
+package com.socialpetwork.controller;
 
-import com.socialpetwork.post.PostRepository;
-import com.socialpetwork.user.UserRepository;
+import com.socialpetwork.service.CommentService;
+import com.socialpetwork.entity.Comment;
+import com.socialpetwork.repository.PostRepository;
+import com.socialpetwork.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;

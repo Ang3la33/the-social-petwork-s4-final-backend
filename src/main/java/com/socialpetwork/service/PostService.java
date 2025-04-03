@@ -1,7 +1,9 @@
-package com.socialpetwork.post;
+package com.socialpetwork.service;
 
-import com.socialpetwork.user.User;
-import com.socialpetwork.user.UserRepository;
+import com.socialpetwork.entity.Post;
+import com.socialpetwork.entity.User;
+import com.socialpetwork.repository.PostRepository;
+import com.socialpetwork.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

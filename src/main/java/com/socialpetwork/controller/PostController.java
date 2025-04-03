@@ -1,7 +1,9 @@
-package com.socialpetwork.post;
+package com.socialpetwork.controller;
 
-import com.socialpetwork.user.User;
-import com.socialpetwork.user.UserService;
+import com.socialpetwork.entity.Post;
+import com.socialpetwork.entity.User;
+import com.socialpetwork.service.PostService;
+import com.socialpetwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

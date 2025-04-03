@@ -1,5 +1,6 @@
-package com.socialpetwork.follower;
+package com.socialpetwork.repository;
 
+import com.socialpetwork.entity.Follower;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
