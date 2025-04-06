@@ -2,9 +2,6 @@ package com.socialpetwork.entity;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "users")
 public class User {
@@ -16,9 +13,6 @@ public class User {
     private String name;
 
     @Column(nullable = false)
-    private String birthday;
-
-    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false, unique = true)
@@ -27,14 +21,17 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserType type;
+
     // Default Constructor
     public User() {
     }
 
     // Parameterized Constructor
-    public User(String name, String birthday, String email, String username, String password) {
+    public User(String name, String email, String username, String password) {
         this.name = name;
-        this.birthday = birthday;
         this.email = email;
         this.username = username;
         this.password = password;
@@ -55,14 +52,6 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
     }
 
     public String getEmail() {
@@ -88,4 +77,13 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public UserType getType() {
+        return type;
+    }
+
+    public void setType(UserType type) {
+        this.type = type;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.socialpetwork.service;
 
 import com.socialpetwork.entity.User;
 import com.socialpetwork.entity.Post;
+import com.socialpetwork.entity.UserType;
 import com.socialpetwork.repository.PostRepository;
 import com.socialpetwork.repository.UserRepository;
 import com.socialpetwork.exception.UserException;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
@@ -35,6 +35,12 @@ public class UserService {
         if (userRepository.existsByEmail(newUser.getEmail())) {
             throw new UserException("A user with this email already exists");
         }
+
+        // Force role to USER in registration
+        newUser.setType(UserType.USER);
+
+        // Hash the password before saving
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 
         return userRepository.save(newUser);
     }
@@ -79,7 +85,6 @@ public class UserService {
         }
 
         existingUser.setName(updatedInfo.getName());
-        existingUser.setBirthday(updatedInfo.getBirthday());
         existingUser.setEmail(updatedInfo.getEmail());
         existingUser.setUsername(updatedInfo.getUsername());
         existingUser.setPassword(updatedInfo.getPassword());
