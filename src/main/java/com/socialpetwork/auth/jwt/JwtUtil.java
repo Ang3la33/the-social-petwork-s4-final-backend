@@ -10,6 +10,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    // Call the JWT Secret Key randomly generated and saved in application properties
     @Value("${jwt.secret}")
     private String jwtSecret;
 
@@ -23,6 +24,7 @@ public class JwtUtil {
                 .claim("role", role.name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
+                // HS512 is used here as it's the most secure of the commonly used symmetric algorithms - it has a hash strength of 512-bit
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }

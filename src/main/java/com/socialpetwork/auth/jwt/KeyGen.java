@@ -1,4 +1,4 @@
-package com.socialpetwork;
+package com.socialpetwork.auth.jwt;
 
 import java.security.SecureRandom;
 import java.util.Base64;
