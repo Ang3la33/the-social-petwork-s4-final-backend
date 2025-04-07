@@ -106,7 +106,21 @@ public class UserController {
 
     // ❌ Delete a user
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+
+        // Extract and validate the token
+        String token = authHeader.replace("Bearer ", "");
+        if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
+
+        // Check role
+        String role = jwtUtil.getRoleFromToken(token);
+        if (!"ADMIN".equals(role)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid request. Only Admins can delete users");
+        }
+
+        // Proceed with deletion of user
         boolean deleted = userService.deleteUser(id);
         if (deleted) {
             return ResponseEntity.noContent().build();

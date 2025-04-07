@@ -48,7 +48,7 @@ public class UserService {
     // 🔐 Validate login and return the user ID if successful
     public Long getUserIdByUsernameAndPassword(String username, String password) {
         User user = userRepository.findByUsername(username);
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             return user.getId();
         }
         return null;
