@@ -1,12 +1,15 @@
 package com.socialpetwork.controller;
 
+import com.socialpetwork.auth.jwt.JwtUtil;
 import com.socialpetwork.entity.User;
 import com.socialpetwork.entity.Post;
 import com.socialpetwork.exception.UserException;
 import com.socialpetwork.service.UserService;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +22,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     // 🆕 Register a new user
     @PostMapping("/register")
@@ -36,19 +43,23 @@ public class UserController {
 
     // 🔐 User Login
     @PostMapping("/login")
-    public ResponseEntity<Long> loginUser(@RequestBody Map<String, String> loginData) {
+    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginData) {
         String username = loginData.get("username");
         String password = loginData.get("password");
 
-        System.out.println("Received login request for username: " + username);
-
-        Long userId = userService.getUserIdByUsernameAndPassword(username, password);
-
-        if (userId != null) {
-            return ResponseEntity.ok(userId);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        User user = userService.getUserFromUsername(username);
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
+
+        String token = jwtUtil.generateToken(user.getUsername(), user.getType());
+
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "username", user.getUsername(),
+                "role", user.getType().name(),
+                "userId", user.getId()
+        ));
     }
 
     // 👥 Get all users

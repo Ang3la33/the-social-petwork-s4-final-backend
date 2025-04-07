@@ -1,4 +1,4 @@
-package com.socialpetwork.config;
+package com.socialpetwork.auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
