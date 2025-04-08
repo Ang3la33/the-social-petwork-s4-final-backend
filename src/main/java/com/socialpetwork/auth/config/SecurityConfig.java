@@ -29,14 +29,19 @@ public class SecurityConfig {
     }
 
     @Bean
+    // Apply security settings to incoming http requests
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                // disable csrf (cross-site reference forgery) as this is a stateless app using JWT tokens not cookies
                 .csrf(csrf -> csrf.disable())
+                // don't create a session / store any user info on the server between requests
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // no login/token needed for accessing the login and registration endpoints / all other routes require authentication
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/login", "/users/register").permitAll()
                         .anyRequest().authenticated()
                 )
+                // run custom JWT filter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
