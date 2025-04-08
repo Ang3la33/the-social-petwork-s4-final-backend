@@ -37,6 +37,10 @@ public class User {
         this.password = password;
     }
 
+    // No args / no params constructor
+    public User() {
+    }
+
     // Getters and Setters
     public Long getId() {
         return id;
