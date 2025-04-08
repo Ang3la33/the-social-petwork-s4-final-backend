@@ -39,6 +39,9 @@ public class UserService {
         newUser.setType(UserType.USER);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 
+        newUser.setAbout("empty");
+        newUser.setBirthday("empty");
+
         return userRepository.save(newUser);
     }
 

@@ -32,9 +32,6 @@ public class User {
     @Column
     private String birthday;
 
-    // Default Constructor
-    public User() {}
-
     // Parameterized Constructor (for full creation)
     public User(String name, String email, String username, String password, UserType type, String about, String birthday) {
         this.name = name;
