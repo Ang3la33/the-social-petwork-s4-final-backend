@@ -2,6 +2,7 @@ package com.socialpetwork.service;
 
 import com.socialpetwork.entity.Post;
 import com.socialpetwork.entity.User;
+import com.socialpetwork.entity.UserType;
 import com.socialpetwork.repository.PostRepository;
 import com.socialpetwork.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,10 +38,17 @@ public class PostServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        // Declare values for the user
+        String name = "Test User";
+        String birthday = "2000-01-01";
+        String email = "testuser@example.com";
+        String username = "testuser";
+        String password = "password123";
+        UserType type = UserType.USER;
+
         // Create Mock User
-        sampleUser = new User();
+        sampleUser = new User(name, birthday, email, username, password, type);
         sampleUser.setId(1L);
-        sampleUser.setUsername("testUser");
 
         // Create Mock Post by Mock User
         samplePost = new Post("Testing post!", sampleUser);
@@ -58,18 +66,18 @@ public class PostServiceTest {
 
     @Test
     void testCreatePost() {
-       when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
-       when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-           Post post = invocation.getArgument(0);
-           post.setId(1L);
-           return post;
-       });
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
+            Post post = invocation.getArgument(0);
+            post.setId(1L);
+            return post;
+        });
 
-       Post createdPost = postService.createPost(samplePost);
+        Post createdPost = postService.createPost(samplePost);
 
-       assertNotNull(createdPost);
-       assertEquals("Testing post!", createdPost.getContent());
-       assertEquals(sampleUser, createdPost.getUser());
+        assertNotNull(createdPost);
+        assertEquals("Testing post!", createdPost.getContent());
+        assertEquals(sampleUser, createdPost.getUser());
     }
 
     @Test
@@ -89,5 +97,4 @@ public class PostServiceTest {
         assertTrue(isDeleted);
         verify(postRepository, times(1)).deleteById(postId);
     }
-
 }

@@ -5,7 +5,6 @@ import com.socialpetwork.entity.User;
 import com.socialpetwork.entity.Post;
 import com.socialpetwork.exception.UserException;
 import com.socialpetwork.service.UserService;
-import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,6 @@ public class UserController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // 🆕 Register a new user
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User newUser) {
         System.out.println("Received POST request to register a new user: " + newUser);
@@ -41,7 +39,6 @@ public class UserController {
         }
     }
 
-    // 🔐 User Login
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginData) {
         String username = loginData.get("username");
@@ -62,14 +59,12 @@ public class UserController {
         ));
     }
 
-    // 👥 Get all users
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
-    // 👤 Get user by ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.getUserFromId(id);
@@ -80,7 +75,6 @@ public class UserController {
         }
     }
 
-    // 🔍 Get user by username
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         User user = userService.getUserFromUsername(username);
@@ -91,7 +85,6 @@ public class UserController {
         }
     }
 
-    // ✏️ Update user information
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User userInfo) {
         try {
@@ -104,23 +97,18 @@ public class UserController {
         }
     }
 
-    // ❌ Delete a user
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
-
-        // Extract and validate the token
         String token = authHeader.replace("Bearer ", "");
         if (!jwtUtil.validateToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
         }
 
-        // Check role
         String role = jwtUtil.getRoleFromToken(token);
         if (!"ADMIN".equals(role)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid request. Only Admins can delete users");
         }
 
-        // Proceed with deletion of user
         boolean deleted = userService.deleteUser(id);
         if (deleted) {
             return ResponseEntity.noContent().build();
@@ -129,7 +117,6 @@ public class UserController {
         }
     }
 
-    // 📄 Get all posts by a specific user
     @GetMapping("/{userId}/posts")
     public ResponseEntity<List<Post>> getPostsByUser(@PathVariable Long userId) {
         List<Post> posts = userService.getPostsByUser(userId);
@@ -139,6 +126,4 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
 }
-

@@ -25,7 +25,6 @@ public class UserService {
     @Autowired
     private PostRepository postRepository;
 
-    // 🆕 Create a new user with validation for unique username and email
     @Transactional
     public User createNewUser(User newUser) throws UserException {
         if (userRepository.existsByUsername(newUser.getUsername())) {
@@ -36,16 +35,12 @@ public class UserService {
             throw new UserException("A user with this email already exists");
         }
 
-        // Force role to USER in registration
         newUser.setType(UserType.USER);
-
-        // Hash the password before saving
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 
         return userRepository.save(newUser);
     }
 
-    // 🔐 Validate login and return the user ID if successful
     public Long getUserIdByUsernameAndPassword(String username, String password) {
         User user = userRepository.findByUsername(username);
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
@@ -54,22 +49,18 @@ public class UserService {
         return null;
     }
 
-    // 👥 Get all users
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // 👤 Get a user by ID
     public User getUserFromId(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
-    // 🔍 Get a user by username
     public User getUserFromUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    // ✏️ Update user information
     @Transactional
     public User updateUser(Long id, User updatedInfo) throws UserException {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new UserException("User not found"));
@@ -92,7 +83,6 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    // ❌ Delete a user
     @Transactional
     public boolean deleteUser(Long id) {
         if (userRepository.existsById(id)) {
@@ -102,11 +92,7 @@ public class UserService {
         return false;
     }
 
-    // 📄 Get all posts by a specific user
     public List<Post> getPostsByUser(Long userId) {
         return postRepository.findByUserId(userId);
     }
 }
-
-
-

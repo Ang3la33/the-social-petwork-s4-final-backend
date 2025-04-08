@@ -4,9 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.socialpetwork.entity.Comment;
-import com.socialpetwork.repository.CommentRepository;
 import com.socialpetwork.entity.Post;
 import com.socialpetwork.entity.User;
+import com.socialpetwork.entity.UserType;
+import com.socialpetwork.repository.CommentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,9 +38,19 @@ class CommentServiceTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User();
-        user2 = new User();
-        post1 = new Post("Test Post",user1);
+        String name = "Test User";
+        String birthday = "2000-01-01";
+        String email = "test@example.com";
+        String username1 = "user1";
+        String username2 = "user2";
+        String password = "pass123";
+        UserType type = UserType.USER;
+
+        user1 = new User(name, birthday, email, username1, password, type);
+        user2 = new User(name, birthday, email, username2, password, type);
+
+        post1 = new Post("Test Post", user1);
+
         comment1 = new Comment(1L, "First comment", user1, post1, LocalDateTime.now());
         comment2 = new Comment(2L, "Second comment", user2, post1, LocalDateTime.now());
     }
@@ -56,19 +67,16 @@ class CommentServiceTest {
 
     @Test
     void testFindCommentsByUser() {
-        when(commentRepository.findByUser(user1)).thenReturn(List.of(comment1)); // Match repository method
+        when(commentRepository.findByUser(user1)).thenReturn(List.of(comment1));
 
         List<Comment> comments = commentService.findCommentsByUser(user1);
 
         assertNotNull(comments);
         assertFalse(comments.isEmpty());
         assertEquals(1, comments.size());
-        assertNotNull(comments.get(0).getContent());
         assertEquals("First comment", comments.get(0).getContent());
-
-        verify(commentRepository, times(1)).findByUser(user1); // Match repository method
+        verify(commentRepository, times(1)).findByUser(user1);
     }
-
 
     @Test
     void testFindCommentsByPost() {
@@ -141,5 +149,4 @@ class CommentServiceTest {
         assertTrue(comments.isEmpty());
         assertEquals(0, comments.size());
     }
-
 }

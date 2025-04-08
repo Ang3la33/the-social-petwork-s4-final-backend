@@ -26,7 +26,7 @@ public class User {
     private UserType type;
 
     // Default Constructor
-    public User() {
+    public User(String name, String birthday, String email, String username, String password, UserType type) {
     }
 
     // Parameterized Constructor

@@ -1,6 +1,8 @@
 package com.socialpetwork.service;
 
 import com.socialpetwork.entity.User;
+import com.socialpetwork.entity.UserType;
+import com.socialpetwork.exception.UserException;
 import com.socialpetwork.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,19 +30,20 @@ public class UserServiceTest {
     private final String emailTest = "deino@dog.com";
     private final String usernameTest = "deinodog";
     private final String passwordTest = "treats123";
-
+    private final UserType userTypeTest = UserType.ADMIN;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Initialize sampleUser with all required fields
-        sampleUser = new User(nameTest, birthdayTest, emailTest, usernameTest, passwordTest);
+        sampleUser = new User(nameTest, birthdayTest, emailTest, usernameTest, passwordTest, userTypeTest);
         sampleUser.setId(1L);
     }
 
     @Test
-    void createNewUserTest() {
+    void createNewUserTest() throws UserException {
+        when(userRepository.existsByUsername(sampleUser.getUsername())).thenReturn(false);
+        when(userRepository.existsByEmail(sampleUser.getEmail())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(sampleUser);
 
         User createdUser = userService.createNewUser(sampleUser);
@@ -54,7 +57,6 @@ public class UserServiceTest {
         verify(userRepository, times(1)).save(sampleUser);
     }
 
-    // changed
     @Test
     void deleteUserTest() {
         Long userId = 1L;
@@ -63,7 +65,9 @@ public class UserServiceTest {
         String email = "testuser@example.com";
         String username = "testuser";
         String password = "password22";
-        User user = new User(name, birthday, email, username, password);
+        UserType type = UserType.ADMIN;
+
+        User user = new User(name, birthday, email, username, password, type);
         user.setId(userId);
 
         when(userRepository.existsById(userId)).thenReturn(true);
@@ -72,9 +76,6 @@ public class UserServiceTest {
         assertTrue(result, "User should be deleted");
         verify(userRepository, times(1)).deleteById(userId);
     }
-
-
-
 
     @Test
     void findUserFromIdTest() {
@@ -89,7 +90,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void updateUserTest() {
+    void updateUserTest() throws UserException {
         sampleUser.setName("Updated Dog");
         when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
         when(userRepository.save(any(User.class))).thenReturn(sampleUser);
