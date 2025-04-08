@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "follows")
+@Table(name = "followers")
 public class Follower {
 
     @Id
@@ -38,35 +38,15 @@ public class Follower {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public User getFollowedUser() { return followedUser; }
+    public void setFollowedUser(User followedUser) { this.followedUser = followedUser; }
 
-    public User getFollowedUser() {
-        return followedUser;
-    }
+    public User getFollower() { return follower; }
+    public void setFollower(User follower) { this.follower = follower; }
 
-    public void setFollowedUser(User followedUser) {
-        this.followedUser = followedUser;
-    }
-
-    public User getFollower() {
-        return follower;
-    }
-
-    public void setFollower(User follower) {
-        this.follower = follower;
-    }
-
-    public LocalDateTime getFollowedAt() {
-        return followedAt;
-    }
-
-    public void setFollowedAt(LocalDateTime followedAt) {
-        this.followedAt = followedAt;
-    }
+    public LocalDateTime getFollowedAt() { return followedAt; }
+    public void setFollowedAt(LocalDateTime followedAt) { this.followedAt = followedAt; }
 }
