@@ -6,6 +6,7 @@ import com.socialpetwork.entity.UserType;
 import com.socialpetwork.repository.PostRepository;
 import com.socialpetwork.repository.UserRepository;
 import com.socialpetwork.exception.UserException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +64,8 @@ public class UserService {
 
     @Transactional
     public User updateUser(Long id, User updatedInfo) throws UserException {
-        User existingUser = userRepository.findById(id).orElseThrow(() -> new UserException("User not found"));
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new UserException("User not found"));
 
         if (!existingUser.getUsername().equals(updatedInfo.getUsername()) &&
                 userRepository.existsByUsername(updatedInfo.getUsername())) {
@@ -78,7 +80,15 @@ public class UserService {
         existingUser.setName(updatedInfo.getName());
         existingUser.setEmail(updatedInfo.getEmail());
         existingUser.setUsername(updatedInfo.getUsername());
-        existingUser.setPassword(updatedInfo.getPassword());
+        existingUser.setAbout(updatedInfo.getAbout());
+        existingUser.setBirthday(updatedInfo.getBirthday());
+
+        // Only update password if it's not null/blank and different
+        if (updatedInfo.getPassword() != null && !updatedInfo.getPassword().isBlank()) {
+            if (!passwordEncoder.matches(updatedInfo.getPassword(), existingUser.getPassword())) {
+                existingUser.setPassword(passwordEncoder.encode(updatedInfo.getPassword()));
+            }
+        }
 
         return userRepository.save(existingUser);
     }

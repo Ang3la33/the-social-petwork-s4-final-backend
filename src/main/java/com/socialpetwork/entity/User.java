@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Primary Key
@@ -25,11 +26,27 @@ public class User {
     @Column(nullable = false)
     private UserType type;
 
+    @Column(length = 1000)
+    private String about;
+
+    @Column
+    private String birthday;
+
     // Default Constructor
-    public User(String name, String birthday, String email, String username, String password, UserType type) {
+    public User() {}
+
+    // Parameterized Constructor (for full creation)
+    public User(String name, String email, String username, String password, UserType type, String about, String birthday) {
+        this.name = name;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.type = type;
+        this.about = about;
+        this.birthday = birthday;
     }
 
-    // Parameterized Constructor
+    // Simplified constructor (optional use)
     public User(String name, String email, String username, String password) {
         this.name = name;
         this.email = email;
@@ -86,4 +103,19 @@ public class User {
         this.type = type;
     }
 
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
 }
