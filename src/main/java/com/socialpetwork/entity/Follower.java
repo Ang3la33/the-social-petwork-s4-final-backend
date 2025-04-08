@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "follows")
+@Table(name = "followers")
 public class Follower {
 
     @Id
@@ -16,57 +16,35 @@ public class Follower {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "followed_user_id", nullable = false)
     @JsonIgnore
-    private User followedUser; // The user who is being followed
+    private User followedUser;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "follower_id", nullable = false)
     @JsonIgnore
-    private User follower; // The user who follows
+    private User follower;
 
     @Column(nullable = false)
     private LocalDateTime followedAt;
 
-    // Default constructor
     public Follower() {
     }
 
-    // Parameterized constructor
     public Follower(User followedUser, User follower) {
         this.followedUser = followedUser;
         this.follower = follower;
-        this.followedAt = LocalDateTime.now(); // Automatically sets timestamp
+        this.followedAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public User getFollowedUser() { return followedUser; }
+    public void setFollowedUser(User followedUser) { this.followedUser = followedUser; }
 
-    public User getFollowedUser() {
-        return followedUser;
-    }
+    public User getFollower() { return follower; }
+    public void setFollower(User follower) { this.follower = follower; }
 
-    public void setFollowedUser(User followedUser) {
-        this.followedUser = followedUser;
-    }
-
-    public User getFollower() {
-        return follower;
-    }
-
-    public void setFollower(User follower) {
-        this.follower = follower;
-    }
-
-    public LocalDateTime getFollowedAt() {
-        return followedAt;
-    }
-
-    public void setFollowedAt(LocalDateTime followedAt) {
-        this.followedAt = followedAt;
-    }
+    public LocalDateTime getFollowedAt() { return followedAt; }
+    public void setFollowedAt(LocalDateTime followedAt) { this.followedAt = followedAt; }
 }
+
