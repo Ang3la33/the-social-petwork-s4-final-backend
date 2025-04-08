@@ -96,7 +96,7 @@ public class UserService {
     public List<Post> getPostsByUser(Long userId) {
         return postRepository.findByUserId(userId);
     }
-}
 
+}
 
 
