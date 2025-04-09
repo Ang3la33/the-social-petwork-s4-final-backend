@@ -2,61 +2,68 @@ package com.socialpetwork.auth.jwt;
 
 import com.socialpetwork.entity.UserType;
 import io.jsonwebtoken.*;
-import org.springframework.stereotype.Component;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
+import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    // Call the JWT Secret Key randomly generated and saved in application properties
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    // Set jwt expiration to 1 day
-    private final long jwtExpirationInMs = 86400000;
+    private Key key;
 
-    // Generate JWT with username and role
+    private final long jwtExpirationInMs = 86400000; // 1 day
+
+    @PostConstruct
+    public void init() {
+        // Convert the string secret into a secure key (required in JJWT 0.11+)
+        key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    }
+
     public String generateToken(String username, UserType role) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("role", role.name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
-                // HS512 is used here as it's the most secure of the commonly used symmetric algorithms - it has a hash strength of 512-bit
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    // Extract username (subject) from token
     public String getUsernameFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJwt(token)
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
 
-    // Extract role from token
     public String getRoleFromToken(String token) {
-        return (String) Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJwt(token)
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
                 .getBody()
-                .get("role");
+                .get("role", String.class);
     }
 
-    // Validate token structure and expiration
     public boolean validateToken(String token) {
-        try{
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
             return true;
-        }
-        catch (SignatureException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException | IllegalArgumentException e) {
-            System.out.println("Invalid JWT");
+        } catch (JwtException | IllegalArgumentException e) {
+            System.out.println("Invalid JWT: " + e.getMessage());
             return false;
         }
     }
-
 }
