@@ -9,6 +9,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.File;
+import java.io.IOException;
+
 
 import java.util.List;
 
@@ -56,16 +60,51 @@ public class PostController {
     /**
      * Create a new post for a user
      */
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Post> createPost(@RequestBody Post post, @RequestParam long userId) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Post> createPost(
+            @RequestParam("content") String content,
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam long userId) {
+
         User user = userService.getUserFromId(userId);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        post.setUser(user);
+        String imageUrl = null;
+
+        if (image != null && !image.isEmpty()) {
+            try {
+                String originalName = image.getOriginalFilename();
+                if (originalName == null || originalName.trim().isEmpty()) {
+                    originalName = "image.jpg";
+                }
+                originalName = originalName.replaceAll("\\s+", "_");
+                String fileName = System.currentTimeMillis() + "_" + originalName;
+
+                System.out.println("📷 Uploading image: " + originalName);
+                System.out.println("📦 Size: " + image.getSize() + " bytes");
+
+                String uploadDir = System.getProperty("user.dir") + "/uploads/";
+                File dir = new File(uploadDir);
+                if (!dir.exists()) dir.mkdirs();
+
+                File destination = new File(uploadDir + fileName);
+                image.transferTo(destination);
+                System.out.println("✅ Image saved to: " + destination.getAbsolutePath());
+
+                imageUrl = "/uploads/" + fileName;
+            } catch (IOException e) {
+                System.out.println("❌ Image saving failed: " + e.getMessage());
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        Post post = new Post(content, user);
+        post.setImageUrl(imageUrl);
+
         Post createdPost = postService.createPost(post);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
+        return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
 
     /**
