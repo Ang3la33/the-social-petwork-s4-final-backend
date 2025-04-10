@@ -13,74 +13,86 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8080")
 @RequestMapping("/posts")
+@CrossOrigin(origins = "http://localhost:3000") // Adjust to match frontend port
 public class PostController {
 
-    @Autowired
-    private PostService postService;
+    private final PostService postService;
+    private final UserService userService;
 
     @Autowired
-    private UserService userService;
+    public PostController(PostService postService, UserService userService) {
+        this.postService = postService;
+        this.userService = userService;
+    }
 
-    // Get all posts
+    /**
+     * Get all posts
+     */
     @GetMapping
     public ResponseEntity<List<Post>> getAllPosts() {
         List<Post> posts = postService.findAllPosts();
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+        return ResponseEntity.ok(posts);
     }
 
-    // Get posts by user ID
+    /**
+     * Get all posts by user ID
+     */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable long userId) {
         List<Post> posts = postService.findPostsByUserId(userId);
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+        return ResponseEntity.ok(posts);
     }
 
-    // Get post by ID
+    /**
+     * Get a specific post by ID
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Post> getPostById(@PathVariable long id) {
         Post post = postService.findPostById(id);
-        return post != null ?
-                new ResponseEntity<>(post, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return (post != null) ? ResponseEntity.ok(post) : ResponseEntity.notFound().build();
     }
 
-    // Create a new post
+    /**
+     * Create a new post for a user
+     */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Post> createPost(@RequestBody Post post, @RequestParam long userId) {
         User user = userService.getUserFromId(userId);
         if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         post.setUser(user);
         Post createdPost = postService.createPost(post);
-        return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
-    //  Update an existing post
+    /**
+     * Update an existing post
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Post> updatePost(@PathVariable long id, @RequestBody Post post, @RequestParam long userId) {
         User user = userService.getUserFromId(userId);
         if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         post.setUser(user);
         Post updatedPost = postService.updatePost(id, post, userId);
-        return updatedPost != null ?
-                new ResponseEntity<>(updatedPost, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return (updatedPost != null) ?
+                ResponseEntity.ok(updatedPost) :
+                ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    // Delete a post
+    /**
+     * Delete a post
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable long id) {
         boolean isDeleted = postService.deletePost(id);
         return isDeleted ?
-                new ResponseEntity<>("Post successfully deleted", HttpStatus.OK) :
-                new ResponseEntity<>("Post not found", HttpStatus.NOT_FOUND);
+                ResponseEntity.ok("Post successfully deleted") :
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
     }
 }
-

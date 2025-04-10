@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // no login/token needed for accessing the login and registration endpoints / all other routes require authentication
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/login", "/users/register").permitAll()
+                        .requestMatchers("/users/login", "/users/register", "/posts/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // run custom JWT filter

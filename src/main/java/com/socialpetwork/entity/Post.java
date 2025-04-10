@@ -1,5 +1,6 @@
 package com.socialpetwork.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -9,14 +10,14 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "content", nullable = false)
+    @Column(nullable = false)
     private String content;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
@@ -29,7 +30,7 @@ public class Post {
     public Post(String content, User user) {
         this.content = content;
         this.user = user;
-        this.createdAt = LocalDateTime.now(); // Automatically sets the timestamp
+        this.createdAt = LocalDateTime.now();
     }
 
     @PrePersist
@@ -40,6 +41,7 @@ public class Post {
     }
 
     // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -72,5 +74,3 @@ public class Post {
         this.createdAt = createdAt;
     }
 }
-
-

@@ -32,6 +32,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+
+        // ✅ Skip JWT auth for public routes
+        if (path.startsWith("/users/login") || path.startsWith("/users/register") || path.startsWith("/posts")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -43,7 +51,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     User user = userRepository.findByUsername(username);
 
                     if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+                        List<SimpleGrantedAuthority> authorities =
+                                List.of(new SimpleGrantedAuthority("ROLE_" + role));
                         UsernamePasswordAuthenticationToken authenticationToken =
                                 new UsernamePasswordAuthenticationToken(user, null, authorities);
                         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
