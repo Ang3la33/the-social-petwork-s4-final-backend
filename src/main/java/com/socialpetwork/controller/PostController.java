@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 import java.util.List;
@@ -128,10 +130,17 @@ public class PostController {
      * Delete a post
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable long id) {
-        boolean isDeleted = postService.deletePost(id);
-        return isDeleted ?
-                ResponseEntity.ok("Post successfully deleted") :
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+    public ResponseEntity<String> deletePost(@PathVariable long id, @AuthenticationPrincipal User authenticatedUser) {
+        Post post = postService.findPostById(id);
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+        }
+
+        if (!post.getUser().getId().equals(authenticatedUser.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not the owner of this post");
+        }
+
+        postService.deletePost(id);
+        return ResponseEntity.ok("Post successfully deleted");
     }
 }

@@ -1,5 +1,6 @@
 package com.socialpetwork.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -12,12 +13,14 @@ public class Comment {
     @Column(name = "id")
     private Long id; // Primary Key
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"posts", "hibernateLazyInitializer", "handler"})
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    @JsonIgnoreProperties({"comments", "hibernateLazyInitializer", "handler"})
     private Post post;
 
     @Column(name = "content", nullable = false)
