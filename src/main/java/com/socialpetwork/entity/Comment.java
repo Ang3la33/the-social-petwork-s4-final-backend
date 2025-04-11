@@ -30,12 +30,11 @@ public class Comment {
         // Default constructor
     }
 
-    public Comment(Long id, String content, User user, Post post, LocalDateTime postedAt) {
-        this.id = id;
+    public Comment(String content, User user, Post post) {
         this.content = content;
         this.user = user;
         this.post = post;
-        this.postedAt = postedAt != null ? postedAt : LocalDateTime.now();
+        this.postedAt = LocalDateTime.now();
     }
 
     @PrePersist

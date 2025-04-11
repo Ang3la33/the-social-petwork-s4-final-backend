@@ -32,16 +32,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String path = request.getRequestURI();
-
-        // ✅ Skip JWT auth for public routes
-        if (path.startsWith("/users/login") || path.startsWith("/users/register") || path.startsWith("/posts")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String authHeader = request.getHeader("Authorization");
 
+        // ✅ Only run JWT logic if Authorization header is present
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.replace("Bearer ", "");
             try {
@@ -61,6 +54,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             } catch (JwtException e) {
                 System.out.println("Invalid JWT: " + e.getMessage());
+                // Let the request continue to reach permitAll endpoints
             }
         }
 

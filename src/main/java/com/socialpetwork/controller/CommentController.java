@@ -1,5 +1,6 @@
 package com.socialpetwork.controller;
 
+import com.socialpetwork.dto.CommentDTO;
 import com.socialpetwork.service.CommentService;
 import com.socialpetwork.entity.Comment;
 import com.socialpetwork.repository.PostRepository;
@@ -10,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/comments")
 public class CommentController {
@@ -47,14 +48,38 @@ public class CommentController {
     }
 
     @GetMapping("/post/{postId}")
-    public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable long postId) {
+    public ResponseEntity<List<CommentDTO>> getCommentsByPostId(@PathVariable long postId) {
         return postRepository.findById(postId)
-                .map(post -> ResponseEntity.ok(commentService.findCommentsByPost(post)))
+                .map(post -> {
+                    List<CommentDTO> dtos = commentService.findCommentsByPost(post).stream()
+                            .map(comment -> new CommentDTO(
+                                    comment.getId(),
+                                    comment.getContent(),
+                                    comment.getUser().getUsername(),
+                                    comment.getPostedAt()
+                            ))
+                            .toList();
+                    return ResponseEntity.ok(dtos);
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<Comment> createComment(@RequestBody Comment comment) {
+        // Fetch full user
+        Long userId = comment.getUser().getId();
+        Long postId = comment.getPost().getId();
+
+        var userOpt = userRepository.findById(userId);
+        var postOpt = postRepository.findById(postId);
+
+        if (userOpt.isEmpty() || postOpt.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        comment.setUser(userOpt.get());
+        comment.setPost(postOpt.get());
+
         Comment newComment = commentService.createComment(comment);
         return ResponseEntity.ok(newComment);
     }
