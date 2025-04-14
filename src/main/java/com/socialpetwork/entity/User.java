@@ -32,8 +32,12 @@ public class User {
     @Column
     private String birthday;
 
+    @Column(length = 1000)
+    private String avatarUrl;
+
+
     // Parameterized Constructor (for full creation)
-    public User(String name, String email, String username, String password, UserType type, String about, String birthday) {
+    public User(String name, String email, String username, String password, UserType type, String about, String birthday, String avatarUrl) {
         this.name = name;
         this.email = email;
         this.username = username;
@@ -41,6 +45,7 @@ public class User {
         this.type = type;
         this.about = about;
         this.birthday = birthday;
+        this.avatarUrl = avatarUrl;
     }
 
     // Simplified constructor (optional use)
@@ -119,4 +124,8 @@ public class User {
     public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
+
+    public String getAvatarUrl() {return avatarUrl;}
+
+    public void setAvatarUrl(String avatarUrl) {this.avatarUrl = avatarUrl;}
 }
