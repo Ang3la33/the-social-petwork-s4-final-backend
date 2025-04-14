@@ -146,52 +146,49 @@ public class UserController {
         try {
             // Validate file type and size
             String contentType = file.getContentType();
-            if (contentType == null || !contentType.equals("image/")) {
+            if (contentType == null || !contentType.startsWith("image/")) {
                 return ResponseEntity.badRequest().body("Only image files are allowed.");
             }
+
 
             if (file.getSize() > 5_000_000) {
                 return ResponseEntity.badRequest().body("File is too large. Max 5MB");
             }
 
-            // Get the users from DB
+            // Get User
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
 
             // Delete old avatar if it exists
             String oldAvatarUrl = user.getAvatarUrl();
             if (oldAvatarUrl != null && !oldAvatarUrl.isEmpty()) {
-                Path oldPath = Paths.get("uploads/avatar/" + oldAvatarUrl.replace("/avatar/", ""));
+                Path oldPath = Paths.get("uploads/avatar/" + oldAvatarUrl.replace("/avatars/", ""));
+                Files.deleteIfExists(oldPath);
             }
 
-            // Create upload directory if not existing
-            String uploadDir =  "uploads/avatar/";
-            File directory = new File(uploadDir);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            // Save the new avatar with secure filename
+            // Validate extension
             String extension = Optional.ofNullable(file.getOriginalFilename())
                     .filter(f -> f.contains("."))
                     .map(f -> f.substring(file.getOriginalFilename().lastIndexOf(".") + 1))
                     .orElse("jpg");
 
+            List<String> allowedExtensions = List.of("jpg", "jpeg", "png", "gif", "webp");
+            if (!allowedExtensions.contains(extension.toLowerCase())) {
+                return ResponseEntity.badRequest().body("Unsupported file type.");
+            }
+
+            // Save new file
             String fileName = UUID.randomUUID().toString() + "." + extension;
-
-            Path filePath = Paths.get(uploadDir + fileName);
-
-            // If using Thumbnailator
-            try (InputStream in = file.getInputStream();
-                OutputStream out = Files.newOutputStream(filePath)) {
+            Path filePath = Paths.get("uploads/avatar/" + fileName);
+            try (InputStream in = file.getInputStream(); OutputStream out = Files.newOutputStream(filePath)) {
                 Thumbnails.of(in)
-                        .size(400,400)
+                        .size(400, 400)
                         .outputFormat("jpg")
                         .outputQuality(0.8)
                         .toOutputStream(out);
             }
 
-            // Update avatarUrl
+            // Save to DB
             user.setAvatarUrl("/avatars/" + fileName);
             userRepository.save(user);
 
