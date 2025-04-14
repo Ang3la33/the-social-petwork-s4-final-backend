@@ -6,6 +6,7 @@ import com.socialpetwork.entity.Post;
 import com.socialpetwork.exception.UserException;
 import com.socialpetwork.repository.UserRepository;
 import com.socialpetwork.service.UserService;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -139,6 +142,7 @@ public class UserController {
     @PostMapping("/{id}/upload-avatar")
     public ResponseEntity<?> uploadAvatar(@PathVariable Long id, @RequestParam("avatar") MultipartFile file) {
         try {
+            // Validate file type and size
             String contentType = file.getContentType();
             if (contentType == null || !contentType.equals("image/")) {
                 return ResponseEntity.badRequest().body("Only image files are allowed.");
@@ -148,17 +152,38 @@ public class UserController {
                 return ResponseEntity.badRequest().body("File is too large. Max 5MB");
             }
 
+            // Get the users from DB
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+
+            // Delete old avatar if it exists
+            String oldAvatarUrl = user.getAvatarUrl();
+            if (oldAvatarUrl != null && !oldAvatarUrl.isEmpty()) {
+                Path oldPath = Paths.get("uploads/avatar/" + oldAvatarUrl.replace("/avatar/", ""));
+            }
+
+            // Create upload directory if not existing
             String uploadDir =  "uploads/avatar/";
             File directory = new File(uploadDir);
             if (!directory.exists()) {
                 directory.mkdirs();
             }
 
+            // Save the new avatar
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             Path filePath = Paths.get(uploadDir + fileName);
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+            // If using Thumbnailator
+            try (InputStream in = file.getInputStream();
+                OutputStream out = Files.newOutputStream(filePath)) {
+                Thumbnails.of(in)
+                        .size(400,400)
+                        .outputFormat("jpg")
+                        .outputQuality(0.8)
+                        .toOutputStream(out);
+            }
+
+            // Update avatarUrl
             user.setAvatarUrl("/avatars/" + fileName);
             userRepository.save(user);
 
