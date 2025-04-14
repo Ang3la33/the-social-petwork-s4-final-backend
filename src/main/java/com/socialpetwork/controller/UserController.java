@@ -23,6 +23,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -169,8 +171,14 @@ public class UserController {
                 directory.mkdirs();
             }
 
-            // Save the new avatar
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            // Save the new avatar with secure filename
+            String extension = Optional.ofNullable(file.getOriginalFilename())
+                    .filter(f -> f.contains("."))
+                    .map(f -> f.substring(file.getOriginalFilename().lastIndexOf(".") + 1))
+                    .orElse("jpg");
+
+            String fileName = UUID.randomUUID().toString() + "." + extension;
+
             Path filePath = Paths.get(uploadDir + fileName);
 
             // If using Thumbnailator
