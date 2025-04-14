@@ -139,6 +139,15 @@ public class UserController {
     @PostMapping("/{id}/upload-avatar")
     public ResponseEntity<?> uploadAvatar(@PathVariable Long id, @RequestParam("avatar") MultipartFile file) {
         try {
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.equals("image/")) {
+                return ResponseEntity.badRequest().body("Only image files are allowed.");
+            }
+
+            if (file.getSize() > 5_000_000) {
+                return ResponseEntity.badRequest().body("File is too large. Max 5MB");
+            }
+
             String uploadDir =  "uploads/avatar/";
             File directory = new File(uploadDir);
             if (!directory.exists()) {
@@ -153,7 +162,10 @@ public class UserController {
             user.setAvatarUrl("/avatars/" + fileName);
             userRepository.save(user);
 
-            return ResponseEntity.ok("Avatar uploaded successfully");
+            return ResponseEntity.ok(Map.of(
+                    "message", "Avatar uploaded successfully!",
+                    "avatarUrl", user.getAvatarUrl()
+            ));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while uploading avatar: " + e.getMessage());
