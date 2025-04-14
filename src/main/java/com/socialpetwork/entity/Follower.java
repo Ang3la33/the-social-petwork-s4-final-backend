@@ -15,13 +15,11 @@ public class Follower {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "followed_user_id", nullable = false)
-    @JsonIgnore
-    private User followedUser; // The user who is being followed
+    private User followedUser;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "follower_id", nullable = false)
-    @JsonIgnore
-    private User follower; // The user who follows
+    private User follower;
 
     @Column(nullable = false)
     private LocalDateTime followedAt;
