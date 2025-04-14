@@ -4,13 +4,20 @@ import com.socialpetwork.auth.jwt.JwtUtil;
 import com.socialpetwork.entity.User;
 import com.socialpetwork.entity.Post;
 import com.socialpetwork.exception.UserException;
+import com.socialpetwork.repository.UserRepository;
 import com.socialpetwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +32,8 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User newUser) {
@@ -125,5 +134,30 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @PostMapping("/{id}/upload-avatar")
+    public ResponseEntity<?> uploadAvatar(@PathVariable Long id, @RequestParam("avatar") MultipartFile file) {
+        try {
+            String uploadDir =  "uploads/avatar/";
+            File directory = new File(uploadDir);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir + fileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+            user.setAvatarUrl("/avatars/" + fileName);
+            userRepository.save(user);
+
+            return ResponseEntity.ok("Avatar uploaded successfully");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while uploading avatar: " + e.getMessage());
+        }
+
     }
 }
