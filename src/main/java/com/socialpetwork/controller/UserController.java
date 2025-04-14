@@ -144,29 +144,29 @@ public class UserController {
     @PostMapping("/{id}/upload-avatar")
     public ResponseEntity<?> uploadAvatar(@PathVariable Long id, @RequestParam("avatar") MultipartFile file) {
         try {
+            System.out.println("📥 Uploading avatar for user ID: " + id);
+
             // Validate file type and size
             String contentType = file.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
                 return ResponseEntity.badRequest().body("Only image files are allowed.");
             }
 
-
             if (file.getSize() > 5_000_000) {
                 return ResponseEntity.badRequest().body("File is too large. Max 5MB");
             }
 
-            // Get User
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
 
-            // Delete old avatar if it exists
+            // Delete old avatar
             String oldAvatarUrl = user.getAvatarUrl();
             if (oldAvatarUrl != null && !oldAvatarUrl.isEmpty()) {
-                Path oldPath = Paths.get("uploads/avatar/" + oldAvatarUrl.replace("/avatars/", ""));
+                Path oldPath = Paths.get("uploads/avatars/" + oldAvatarUrl.replace("/avatars/", ""));
                 Files.deleteIfExists(oldPath);
+                System.out.println("🗑️ Deleted old avatar: " + oldAvatarUrl);
             }
 
-            // Validate extension
             String extension = Optional.ofNullable(file.getOriginalFilename())
                     .filter(f -> f.contains("."))
                     .map(f -> f.substring(file.getOriginalFilename().lastIndexOf(".") + 1))
@@ -177,9 +177,12 @@ public class UserController {
                 return ResponseEntity.badRequest().body("Unsupported file type.");
             }
 
-            // Save new file
             String fileName = UUID.randomUUID().toString() + "." + extension;
-            Path filePath = Paths.get("uploads/avatar/" + fileName);
+            Path avatarDir = Paths.get("uploads/avatars/");
+            Files.createDirectories(avatarDir);
+            Path filePath = avatarDir.resolve(fileName);
+            System.out.println("📂 Saving to: " + filePath.toAbsolutePath());
+
             try (InputStream in = file.getInputStream(); OutputStream out = Files.newOutputStream(filePath)) {
                 Thumbnails.of(in)
                         .size(400, 400)
@@ -188,9 +191,11 @@ public class UserController {
                         .toOutputStream(out);
             }
 
-            // Save to DB
             user.setAvatarUrl("/avatars/" + fileName);
+            System.out.println("✅ Avatar URL set: " + user.getAvatarUrl());
+
             userRepository.save(user);
+            System.out.println("✅ User saved with new avatar!");
 
             return ResponseEntity.ok(Map.of(
                     "message", "Avatar uploaded successfully!",
@@ -198,8 +203,9 @@ public class UserController {
             ));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while uploading avatar: " + e.getMessage());
+            e.printStackTrace(); // Full error log
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error while uploading avatar: " + e.getMessage());
         }
-
     }
 }

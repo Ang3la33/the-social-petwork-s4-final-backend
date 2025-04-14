@@ -48,10 +48,13 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/users/login",
                                 "/users/register",
+                                "/users/**",
+                                "/users/*/upload-avatar",
                                 "/posts/**",
                                 "/comments/**",
                                 "/comments/post/**",
-                                "/uploads/**"
+                                "/uploads/**",
+                                "/avatars/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -66,7 +69,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of("http://localhost:3000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(Boolean.valueOf(true));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
