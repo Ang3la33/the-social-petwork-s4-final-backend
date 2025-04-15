@@ -1,4 +1,3 @@
 package com.socialpetwork.uploads;
 
-public class avatars {
-}
+public class avatars {}
