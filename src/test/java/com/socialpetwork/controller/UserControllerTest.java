@@ -13,7 +13,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -57,6 +61,17 @@ public class UserControllerTest {
 
         assertEquals(409, response.getStatusCodeValue());
         assertEquals("Username exists", response.getBody());
+    }
+
+    @Test
+    void testGetAllUsers() {
+        when(userService.getAllUsers()).thenReturn(List.of(testUser));
+
+        ResponseEntity<List<User>> response = userController.getAllUsers();
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(1, response.getBody().size());
+        assertEquals(testUser, response.getBody().get(0));
     }
 
 }
