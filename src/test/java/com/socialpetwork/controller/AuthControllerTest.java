@@ -56,4 +56,28 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.username").value("username"));
 
     }
+
+    @Test
+    void loginUser_withCorrectCredentials_returnsOk() throws Exception {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername("testuser");
+        loginRequest.setPassword("password123");
+
+        User mockUser = new User();
+        mockUser.setId(1L);
+        mockUser.setUsername("testuser");
+        mockUser.setPassword(new BCryptPasswordEncoder().encode("password123"));
+
+        Mockito.when(userService.getUserFromUsername("testuser")).thenReturn(mockUser);
+
+        mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("Login successful. User ID: " + mockUser.getId()));
+
+    }
+
+
 }
