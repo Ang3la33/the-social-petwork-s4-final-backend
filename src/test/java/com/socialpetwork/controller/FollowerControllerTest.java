@@ -10,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -55,6 +57,17 @@ public class FollowerControllerTest {
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("✅ Successfully unfollowed bob", response.getBody());
+    }
+
+    @Test
+    void getFollowers_returnsListOfFollowers() {
+        when(followerService.getFollowers(2L)).thenReturn(List.of(follower));
+
+        ResponseEntity<List<Follower>> response = followerController.getFollowers(2L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(1, response.getBody().size());
+        assertEquals(user1.getUsername(), response.getBody().get(0).getFollower().getUsername());
     }
 
 }
