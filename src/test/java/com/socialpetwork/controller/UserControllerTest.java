@@ -2,6 +2,7 @@ package com.socialpetwork.controller;
 
 import com.socialpetwork.entity.User;
 import com.socialpetwork.entity.UserType;
+import com.socialpetwork.exception.UserException;
 import com.socialpetwork.repository.UserRepository;
 import com.socialpetwork.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,6 +48,15 @@ public class UserControllerTest {
 
         assertEquals(201, response.getStatusCodeValue());
         assertEquals(testUser, response.getBody());
+    }
+
+    @Test
+    void testRegisterUser_Failure() {
+        when(userService.createNewUser(any(User.class))).thenThrow(new UserException("Username exists"));
+        ResponseEntity<?> response = userController.registerUser(testUser);
+
+        assertEquals(409, response.getStatusCodeValue());
+        assertEquals("Username exists", response.getBody());
     }
 
 }
