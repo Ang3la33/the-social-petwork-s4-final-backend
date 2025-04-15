@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialpetwork.auth.jwt.JwtAuthFilter;
 import com.socialpetwork.auth.login.LoginRequest;
 import com.socialpetwork.entity.User;
+import com.socialpetwork.exception.UserException;
 import com.socialpetwork.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -79,5 +80,21 @@ public class AuthControllerTest {
 
     }
 
+    @Test
+    void registerUser_withDuplicateUsername_returnsBadRequest() throws Exception {
+        User user = new User();
+        user.setUsername("duplicateUsername");
+        user.setPassword("password123");
+
+        Mockito.when(userService.createNewUser(any(User.class)))
+                .thenThrow(new UserException("Username already exists"));
+
+        mockMvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Username already exists"));
+    }
 
 }
