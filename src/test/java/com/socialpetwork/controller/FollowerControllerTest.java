@@ -3,6 +3,7 @@ package com.socialpetwork.controller;
 import com.socialpetwork.entity.Follower;
 import com.socialpetwork.entity.User;
 import com.socialpetwork.service.FollowerService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -79,6 +80,11 @@ public class FollowerControllerTest {
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(1, response.getBody().size());
         assertEquals(user2.getUsername(), response.getBody().get(0).getFollowedUser().getUsername());
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
     }
 
 }
