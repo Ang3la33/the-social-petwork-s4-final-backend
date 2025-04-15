@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class PostControllerTest {
@@ -69,5 +71,16 @@ public class PostControllerTest {
         ResponseEntity<Post> response = postController.getPostById(99L);
 
         assertEquals(404, response.getStatusCodeValue());
+    }
+
+    @Test
+    void updatePost_success() {
+        when(userService.getUserFromId(1L)).thenReturn(user);
+        when(postService.updatePost(eq(10L), any(Post.class), eq(1L))).thenReturn(post);
+
+        ResponseEntity<Post> response = postController.updatePost(10L, post, 1L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(post,response.getBody());
     }
 }
