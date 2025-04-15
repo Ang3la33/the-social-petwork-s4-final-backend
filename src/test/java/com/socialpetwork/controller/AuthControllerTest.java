@@ -97,4 +97,25 @@ public class AuthControllerTest {
                 .andExpect(content().string("Username already exists"));
     }
 
+    @Test
+    void loginUser_withIncorrectPassword_returnsUnauthorized() throws Exception {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername("testuser");
+        loginRequest.setPassword("wrongPassword");
+
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testuser");
+        user.setPassword(new BCryptPasswordEncoder().encode("correctPassword"));
+
+        Mockito.when(userService.getUserFromUsername("testuser")).thenReturn(user);
+
+        mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().string("Invalid username or password."));
+    }
+
 }
