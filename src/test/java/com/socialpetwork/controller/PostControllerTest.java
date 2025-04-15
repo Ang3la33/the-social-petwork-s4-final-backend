@@ -52,5 +52,14 @@ public class PostControllerTest {
         assertEquals(post, response.getBody().get(0));
     }
 
+    @Test
+    void getPostById_found() {
+        when(postService.findPostById(10L)).thenReturn(post);
+
+        ResponseEntity<Post> response = postController.getPostById(10L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("Hello world", response.getBody().getContent());
+    }
 
 }
