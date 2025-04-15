@@ -13,8 +13,10 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 public class CommentServiceTest {
@@ -57,6 +59,16 @@ public class CommentServiceTest {
 
         assertEquals(1, result.size());
         assertEquals("Test comment", result.get(0).getContent());
+    }
+
+    @Test
+    void findCommentById_found() {
+        when(commentRepository.findById(1L)).thenReturn(Optional.of(comment));
+
+        Comment result = commentService.findCommentById(1L);
+
+        assertNotNull(result);
+        assertEquals("Test comment", result.getContent());
     }
 
 }
