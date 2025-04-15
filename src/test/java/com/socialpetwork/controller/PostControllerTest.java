@@ -4,6 +4,7 @@ import com.socialpetwork.entity.Post;
 import com.socialpetwork.entity.User;
 import com.socialpetwork.service.PostService;
 import com.socialpetwork.service.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -82,5 +83,10 @@ public class PostControllerTest {
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(post,response.getBody());
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
     }
 }
