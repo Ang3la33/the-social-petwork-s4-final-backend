@@ -70,4 +70,15 @@ public class FollowerControllerTest {
         assertEquals(user1.getUsername(), response.getBody().get(0).getFollower().getUsername());
     }
 
+    @Test
+    void getFollowing_returnsList() {
+        when(followerService.getFollowing(1L)).thenReturn(List.of(follower));
+
+        ResponseEntity<List<Follower>> response = followerController.getFollowing(1L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(1, response.getBody().size());
+        assertEquals(user2.getUsername(), response.getBody().get(0).getFollowedUser().getUsername());
+    }
+
 }
