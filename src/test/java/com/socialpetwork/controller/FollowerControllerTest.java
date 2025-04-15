@@ -47,4 +47,14 @@ public class FollowerControllerTest {
         assertEquals("✅ Successfully followed bob", response.getBody());
     }
 
+    @Test
+    void unfollowUser_success() {
+        when(followerService.unfollowUser(2L, 1L)).thenReturn("✅ Successfully unfollowed bob");
+
+        ResponseEntity<String> response = followerController.unfollowUser(1L, 2L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("✅ Successfully unfollowed bob", response.getBody());
+    }
+
 }
