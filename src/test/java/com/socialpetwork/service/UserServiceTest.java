@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -72,6 +74,16 @@ public class UserServiceTest {
         when(userRepository.existsByEmail("test@email.com")).thenReturn(true);
 
         assertThrows(UserException.class, () -> userService.createNewUser(user));
+    }
+
+    @Test
+    void getUserById() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        User result = userService.getUserFromId(1L);
+
+        assertNotNull(result);
+        assertEquals("testuser", result.getUsername());
     }
 
 }
