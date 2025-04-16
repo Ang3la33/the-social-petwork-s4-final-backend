@@ -86,4 +86,12 @@ public class UserServiceTest {
         assertEquals("testuser", result.getUsername());
     }
 
+    @Test
+    void getUserByUsername() {
+        when(userRepository.findByUsername("testuser")).thenReturn(user);
+        User result = userService.getUserFromUsername("testuser");
+        assertNotNull(result);
+        assertEquals("testuser", result.getUsername());
+    }
+
 }
