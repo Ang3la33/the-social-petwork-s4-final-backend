@@ -6,9 +6,17 @@ import com.socialpetwork.repository.FollowerRepository;
 import com.socialpetwork.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class FollowerServiceTest {
 
@@ -44,5 +52,17 @@ public class FollowerServiceTest {
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
+    }
+
+    @Test
+    void followUser_success() {
+        when(followerRepository.existsByFollowedUserIdAndFollowerId(2L, 1L)).thenReturn(false);
+        when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+
+        String result = followerService.followUser(1L, 2L);
+
+        assertEquals("✅ Successfully followed username2", result);
+        verify(followerRepository).save(any(Follower.class));
     }
 }
