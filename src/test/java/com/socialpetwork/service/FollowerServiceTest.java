@@ -72,4 +72,13 @@ public class FollowerServiceTest {
 
         assertEquals("❌ You can't follow yourself.", result);
     }
+
+    @Test
+    void followUser_alreadyFollowing_fail() {
+        when(followerRepository.existsByFollowedUserIdAndFollowerId(2L, 1L)).thenReturn(true);
+
+        String result = followerService.followUser(1L, 2L);
+
+        assertEquals("❌ You are already following this user.", result);
+    }
 }
