@@ -15,8 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 public class CommentServiceTest {
@@ -69,6 +68,13 @@ public class CommentServiceTest {
 
         assertNotNull(result);
         assertEquals("Test comment", result.getContent());
+    }
+
+    @Test
+    void findCommentById_notFound() {
+        when(commentRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> commentService.findCommentById(1L));
     }
 
 }
