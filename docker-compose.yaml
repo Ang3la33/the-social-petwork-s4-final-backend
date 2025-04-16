@@ -1,37 +1,12 @@
 version: "3.8"
 
 services:
-  db:
-    image: mysql:8.0
-    container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   app:
     image: your-dockerhub/spring-boot-app:latest
     container_name: springboot-app
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mydatabase
-      SPRING_DATASOURCE_USERNAME: myuser
-      SPRING_DATASOURCE_PASSWORD: mypassword
-    depends_on:
-      db:
-        condition: service_healthy
-
-volumes:
-  db_data:
-
+      SPRING_DATASOURCE_URL: jdbc:mysql://the-social-petwork-db.cfw4iak0i3r3.ca-central-1.rds.amazonaws.com:3306/socialpetworkdb
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: e4moOnRShSGwMciLqTDm

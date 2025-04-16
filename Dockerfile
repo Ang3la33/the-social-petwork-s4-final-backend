@@ -1,4 +1,9 @@
-FROM amazoncorretto:17
+FROM eclipse-temurin:17-jdk-alpine
+
 WORKDIR /app
-COPY target/Social-Petwork-Server-1.0-SNAPSHOT.jar app.jar
+
+ARG JAR_FILE=target/*.jar
+
+COPY ${JAR_FILE} app.jar
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
