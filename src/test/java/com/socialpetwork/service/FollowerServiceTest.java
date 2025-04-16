@@ -65,4 +65,11 @@ public class FollowerServiceTest {
         assertEquals("✅ Successfully followed username2", result);
         verify(followerRepository).save(any(Follower.class));
     }
+
+    @Test
+    void followUser_sameId_fail() {
+        String result = followerService.followUser(1L, 1L);
+
+        assertEquals("❌ You can't follow yourself.", result);
+    }
 }
