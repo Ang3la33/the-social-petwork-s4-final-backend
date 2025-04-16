@@ -94,4 +94,18 @@ public class PostServiceTest {
 
     }
 
+    @Test
+    void updatePost() {
+        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        when(postRepository.save(any(Post.class))).thenReturn(post);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Post updatedPost = new Post("Updated post", user);
+
+        Post result = postService.updatePost(1L, updatedPost, 1L);
+
+        assertNotNull(result);
+        assertEquals("Updated post", result.getContent());
+    }
+
 }
