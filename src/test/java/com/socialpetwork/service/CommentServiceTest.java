@@ -4,7 +4,7 @@ import com.socialpetwork.entity.Comment;
 import com.socialpetwork.entity.Post;
 import com.socialpetwork.entity.User;
 import com.socialpetwork.repository.CommentRepository;
-import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -86,5 +86,10 @@ public class CommentServiceTest {
 
         assertNotNull(result);
         assertEquals("Test comment", result.getContent());
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
     }
 }
