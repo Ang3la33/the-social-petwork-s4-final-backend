@@ -66,4 +66,12 @@ public class UserServiceTest {
         assertThrows(UserException.class, () -> userService.createNewUser(user));
     }
 
+    @Test
+    void createNewUser_emailExists_throwsException() {
+        when(userRepository.existsByUsername("testuser")).thenReturn(false);
+        when(userRepository.existsByEmail("test@email.com")).thenReturn(true);
+
+        assertThrows(UserException.class, () -> userService.createNewUser(user));
+    }
+
 }
