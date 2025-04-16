@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,6 +67,17 @@ public class PostServiceTest {
         Post result = postService.findPostById(99L);
 
         assertNull(result);
+    }
+
+    @Test
+    void findPostsByUserId_returnsListOfPosts() {
+        when(postRepository.findByUserId(1L)).thenReturn(List.of(post));
+
+        List<Post> result = postService.findPostsByUserId(1L);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("Test post", result.get(0).getContent());
     }
 
 }
