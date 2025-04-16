@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -117,6 +118,16 @@ public class UserServiceTest {
 
         assertTrue(result);
         verify(userRepository).deleteById(1L);
+    }
+
+    @Test
+    void getAllUsers_returnsList() {
+        when(userRepository.findAll()).thenReturn(List.of(user));
+
+        List<User> result = userService.getAllUsers();
+
+        assertEquals(1, result.size());
+        assertEquals(user, result.get(0));
     }
 
 }
