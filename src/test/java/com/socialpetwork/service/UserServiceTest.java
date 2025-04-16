@@ -94,4 +94,18 @@ public class UserServiceTest {
         assertEquals("testuser", result.getUsername());
     }
 
+    @Test
+    void updateUser_success() {
+        User updated = new User("Updated", "test@email.com", "testuser", "password", UserType.USER, "New about", "1990-01-01", null);
+        updated.setId(1L);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
+        when(userRepository.save(any(User.class))).thenReturn(updated);
+
+        User result = userService.updateUser(1L, updated);
+
+        assertEquals("Updated", result.getName());
+    }
+
 }
