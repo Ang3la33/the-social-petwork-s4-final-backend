@@ -102,4 +102,14 @@ public class FollowerServiceTest {
         verify(followerRepository).delete(follower);
     }
 
+    @Test
+    void unfollowUser_notFollowing_returnsError() {
+        when(followerRepository.findByFollowedUserIdAndFollowerId(2L, 1L))
+                .thenReturn(Optional.empty());
+
+        String result = followerService.unfollowUser(2L, 1L);
+
+        assertEquals("❌ You are not following this user.", result);
+    }
+
 }
