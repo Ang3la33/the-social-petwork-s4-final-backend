@@ -2,6 +2,7 @@ package com.socialpetwork.service;
 
 import com.socialpetwork.entity.User;
 import com.socialpetwork.entity.UserType;
+import com.socialpetwork.exception.UserException;
 import com.socialpetwork.repository.PostRepository;
 import com.socialpetwork.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -12,8 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -57,6 +57,13 @@ public class UserServiceTest {
 
         assertNotNull(result);
         assertEquals("testuser", result.getUsername());
+    }
+
+    @Test
+    void createNewUser_usernameExists_throwsException() {
+        when(userRepository.existsByUsername("testuser")).thenReturn(true);
+
+        assertThrows(UserException.class, () -> userService.createNewUser(user));
     }
 
 }
