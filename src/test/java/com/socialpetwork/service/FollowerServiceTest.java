@@ -81,4 +81,14 @@ public class FollowerServiceTest {
 
         assertEquals("❌ You are already following this user.", result);
     }
+
+    @Test
+    void followUser_userNotFound_fail() {
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+
+        String result = followerService.followUser(1L, 2L);
+        assertEquals("❌ User not found.", result);
+    }
+
 }
