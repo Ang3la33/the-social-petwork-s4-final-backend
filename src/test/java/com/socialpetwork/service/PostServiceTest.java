@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class PostServiceTest {
@@ -78,6 +79,19 @@ public class PostServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Test post", result.get(0).getContent());
+    }
+
+    @Test
+    void createPost() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(postRepository.save(any(Post.class))).thenReturn(post);
+
+        Post newPost = new Post("New post", user);
+        Post result = postService.createPost(newPost);
+
+        assertNotNull(result);
+        assertEquals("Test post", result.getContent());
+
     }
 
 }
