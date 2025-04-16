@@ -124,4 +124,14 @@ public class FollowerServiceTest {
 
     }
 
+    @Test
+    void getFollowing_returnsList() {
+        when(followerRepository.findByFollowerId(1L)).thenReturn(List.of(follower));
+
+        List<Follower> result = followerService.getFollowing(1L);
+
+        assertEquals(1, result.size());
+        assertEquals(user2, result.get(0).getFollowedUser());
+    }
+
 }
