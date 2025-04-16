@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
@@ -106,6 +107,16 @@ public class UserServiceTest {
         User result = userService.updateUser(1L, updated);
 
         assertEquals("Updated", result.getName());
+    }
+
+    @Test
+    void deleteUser_success() {
+        when(userRepository.existsById(1L)).thenReturn(true);
+
+        boolean result = userService.deleteUser(1L);
+
+        assertTrue(result);
+        verify(userRepository).deleteById(1L);
     }
 
 }
