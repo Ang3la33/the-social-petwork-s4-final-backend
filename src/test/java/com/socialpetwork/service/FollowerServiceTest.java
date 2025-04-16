@@ -91,4 +91,15 @@ public class FollowerServiceTest {
         assertEquals("❌ User not found.", result);
     }
 
+    @Test
+    void unfollowUser_success() {
+        when(followerRepository.findByFollowedUserIdAndFollowerId(2L, 1L))
+                .thenReturn(Optional.of(follower));
+
+        String result = followerService.unfollowUser(2L, 1L);
+
+        assertEquals("✅ Successfully unfollowed username2", result);
+        verify(followerRepository).delete(follower);
+    }
+
 }
