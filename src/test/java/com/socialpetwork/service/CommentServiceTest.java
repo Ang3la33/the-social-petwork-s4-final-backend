@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class CommentServiceTest {
@@ -77,4 +78,13 @@ public class CommentServiceTest {
         assertThrows(RuntimeException.class, () -> commentService.findCommentById(1L));
     }
 
+    @Test
+    void createComment() {
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
+
+        Comment result = commentService.createComment(comment);
+
+        assertNotNull(result);
+        assertEquals("Test comment", result.getContent());
+    }
 }
