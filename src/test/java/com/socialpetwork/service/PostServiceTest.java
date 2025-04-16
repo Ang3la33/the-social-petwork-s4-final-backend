@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PostServiceTest {
@@ -106,6 +107,16 @@ public class PostServiceTest {
 
         assertNotNull(result);
         assertEquals("Updated post", result.getContent());
+    }
+
+    @Test
+    void deletePost() {
+        when(postRepository.existsById(1L)).thenReturn(true);
+
+        boolean result = postService.deletePost(1L);
+
+        assertTrue(result);
+        verify(postRepository).deleteById(1L);
     }
 
 }
