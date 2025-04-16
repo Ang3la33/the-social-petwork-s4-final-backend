@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -110,6 +111,17 @@ public class FollowerServiceTest {
         String result = followerService.unfollowUser(2L, 1L);
 
         assertEquals("❌ You are not following this user.", result);
+    }
+
+    @Test
+    void getFollowers_success() {
+        when(followerRepository.findByFollowedUserId(2L)).thenReturn(List.of(follower));
+
+        List<Follower> followers = followerService.getFollowers(2L);
+
+        assertEquals(1, followers.size());
+        assertEquals(user1, followers.get(0).getFollower());
+
     }
 
 }
