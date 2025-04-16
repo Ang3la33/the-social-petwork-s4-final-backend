@@ -14,8 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 public class PostServiceTest {
@@ -57,6 +56,15 @@ public class PostServiceTest {
 
         assertNotNull(result);
         assertEquals("Test post", result.getContent());
+    }
+
+    @Test
+    void findPostById_notFound() {
+        when(postRepository.findById(99L)).thenReturn(Optional.empty());
+
+        Post result = postService.findPostById(99L);
+
+        assertNull(result);
     }
 
 }
