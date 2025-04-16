@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -167,9 +169,11 @@ class UserControllerTest {
         assertEquals(404, response.getStatusCodeValue());
     }
 
+
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
+
 }
 
