@@ -6,9 +6,17 @@ import com.socialpetwork.repository.PostRepository;
 import com.socialpetwork.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
 public class PostServiceTest {
 
@@ -39,6 +47,16 @@ public class PostServiceTest {
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
+    }
+
+    @Test
+    void findPostById_found() {
+        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+
+        Post result = postService.findPostById(1L);
+
+        assertNotNull(result);
+        assertEquals("Test post", result.getContent());
     }
 
 }
