@@ -66,15 +66,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://99.79.59.205:3000"));
+        config.setAllowedOrigins(List.of("http://social-petwork-frontend.s3-website.ca-central-1.amazonaws.com"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(Boolean.valueOf(true));
+        config.setAllowCredentials(true); // No need to wrap in Boolean.valueOf
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 
     @Bean
     public InMemoryUserDetailsManager userDetailsManager(PasswordEncoder passwordEncoder) {
