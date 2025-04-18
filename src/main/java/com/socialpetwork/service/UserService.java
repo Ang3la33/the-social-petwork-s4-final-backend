@@ -36,7 +36,10 @@ public class UserService {
             throw new UserException("A user with this email already exists");
         }
 
-        newUser.setType(UserType.USER);
+        if (newUser.getType() == null) {
+            newUser.setType(UserType.USER);
+        }
+
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 
         newUser.setAbout("empty");
